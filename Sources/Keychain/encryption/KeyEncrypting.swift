@@ -17,9 +17,9 @@ final class KeyEncryptor: KeyEncrypting {
 
     /// Encrypt the private key using a secret generated in the secure enclave
     /// - Parameters:
-    ///   - privateKey: Account's private key
+    ///   - privateKey: Private key
     ///   - reference: Reference used to place the generated secret
-    /// - Returns: Private Key Encrypted
+    /// - Returns: Ciphertext
     func encrypt(_ privateKey: Data, with reference: String) throws -> CFData {
         let secret: SecKey
         do {
@@ -44,7 +44,7 @@ final class KeyEncryptor: KeyEncrypting {
         return ciphertext
     }
 
-    /// Resolve the reference of the secret, throw an error in case it does not exist
+    /// Fetch the reference of the secret, throw an error in case it does not exist
     private func retrieveSecret(with reference: String) throws -> SecKey {
         let query: [String: Any] = [
             kSecClass as String: kSecClassKey,

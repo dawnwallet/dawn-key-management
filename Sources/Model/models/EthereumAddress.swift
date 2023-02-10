@@ -15,9 +15,15 @@ public struct EthereumAddress {
         case invalidCheckSum
     }
 
-    /// Initialized an ethereum address with a string representation.
+
+    /// Creates a new EthereumAddress with a given hex string
+    /// - Hex must be injected in checksum format
+    /// - Parameter hex:Hex string with either with 0x prefix or without
     public init(hex: String) throws {
-        guard hex.count == 40 || hex.count == 42 || (hex.count == 40 && hex.hasPrefix("0x")) else {
+        guard hex.count == 40 || hex.count == 42 else {
+            throw Error.incorrectLength
+        }
+        guard hex.count == 40 && hex.hasPrefix("0x") else {
             throw Error.incorrectLength
         }
 
@@ -33,7 +39,8 @@ public struct EthereumAddress {
         }
     }
 
-    /// Initialized an ethereum address with an array of bytes.
+    /// Creates a new EthereumAddress with a given array of bytes
+    /// - Parameter bytes:Must be a 20 byte array
     public init(bytes: ByteArray) throws {
         if bytes.count != 20 {
             throw Error.incorrectLength
@@ -41,7 +48,8 @@ public struct EthereumAddress {
         self.addressBytes = bytes
     }
 
-    /// Initialized an ethereum address with a public key.
+    /// Creates a new EthereumAddress with a given public key
+    /// - Parameter publicKey: EthereumPublicKey object
     public init(publicKey: EthereumPublicKey) throws {
         guard publicKey.isValid() else {
             throw Error.invalidPublicKey
