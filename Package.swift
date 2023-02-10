@@ -6,11 +6,14 @@ let package = Package(
     name: "KeyManagement",
     products: [
         .library(
-            name: "Keystore",
-            targets: ["Keystore"]),
+            name: "Account",
+            targets: ["Account"]),
         .library(
             name: "Keychain",
-            targets: ["Keychain"])
+            targets: ["Keychain"]),
+        .library(
+            name: "Signing",
+            targets: ["Signing"])
     ],
     dependencies: [
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift", from: "1.5.1"),
@@ -19,8 +22,8 @@ let package = Package(
     targets: [
         .target(name: "Keychain", dependencies: [.product(name: "secp256k1", package: "secp256k1.swift"), "Model"]),
         .testTarget(name: "KeychainTests", dependencies: ["Keychain"]),
-        .target(name: "Keystore", dependencies: ["Model"]),
-        .testTarget(name: "KeystoreTests", dependencies: ["Keystore"]),
+        .target(name: "Account", dependencies: ["Model"]),
+        .testTarget(name: "AccountTests", dependencies: ["Account"]),
         .target(name: "Model", dependencies: ["CryptoSwift"]),
         .testTarget(name: "ModelTests", dependencies: ["Keychain"]),
         .target(name: "Signing", dependencies: ["Model", "Keychain"]),
