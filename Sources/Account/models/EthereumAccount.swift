@@ -1,18 +1,13 @@
 import Foundation
 
 /**
- *  An account handles storing, updating, loading and removing either you private key account or your seed phrase one.
- *  We differ between both to avoid fetching all seed phrases in case we want to derive a single wallet. Any derived wallet is stored as PrivateKeyAccount
- *  EthereumAccount stores all its accounts in a directory located at **accounts**
+ *  An account handles storing, updating, loading and removing either your private key account or your seed phrase.
+ *  We differ between both to avoid fetching all seed phrases in case we want to derive a new wallet. Any new private key is also stored as PrivateKeyAccount
+ *  EthereumAccount stores all its accounts in a directory called **accounts**
 */
 public final class EthereumAccount: Identifiable {
 
     public let walletDirectory: WriterDirectory
-
-    public enum Error: Swift.Error {
-        case fetchingSelectedWallet
-        case importingMnemonic
-    }
 
     public init(walletDirectory: WriterDirectory = WalletWriterDirectory(fileSubfolder: "accounts/")) {
         self.walletDirectory = walletDirectory

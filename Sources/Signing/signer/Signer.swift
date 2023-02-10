@@ -5,7 +5,6 @@ import typealias Model.Signature
 import typealias Model.ByteArray
 import class Model.EthereumPrivateKey
 
-
 enum Error: Swift.Error {
     case memoryBound
     case createContext
