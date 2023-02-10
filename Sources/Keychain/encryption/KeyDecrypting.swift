@@ -1,12 +1,11 @@
 import Foundation
-import class Crypto.EthereumPrivateKey
-import CryptoSwift
+import class Model.EthereumPrivateKey
 
 protocol KeyDecrypting {
     func decrypt(_ address: String, cipherText: Data) throws -> EthereumPrivateKey
 }
 
-extension KeyDecrypting {
+final class KeyDecryptor: KeyDecrypting {
     public func decrypt(_ address: String, cipherText: Data) throws -> EthereumPrivateKey {
         // 1. Get the reference of the secret stored in the secure enclave
         let secret = try secretReference(with: address, cipherText: cipherText)

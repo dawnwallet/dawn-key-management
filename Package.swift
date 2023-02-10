@@ -20,13 +20,13 @@ let package = Package(
         .package(url: "https://github.com/GigaBitcoin/secp256k1.swift", branch: "main")
     ],
     targets: [
-        .target(name: "Keychain", dependencies: [.product(name: "secp256k1", package: "secp256k1.swift"), "Model"]),
+        .target(name: "Keychain", dependencies: ["Model"]),
         .testTarget(name: "KeychainTests", dependencies: ["Keychain"]),
         .target(name: "Account", dependencies: ["Model"]),
         .testTarget(name: "AccountTests", dependencies: ["Account"]),
         .target(name: "Model", dependencies: ["CryptoSwift"]),
-        .testTarget(name: "ModelTests", dependencies: ["Keychain"]),
-        .target(name: "Signing", dependencies: ["Model", "Keychain"]),
-        .testTarget(name: "SigningTests", dependencies: ["Keychain"]),
+        .testTarget(name: "ModelTests", dependencies: ["Model"]),
+        .target(name: "Signing", dependencies: [.product(name: "secp256k1", package: "secp256k1.swift"), "Model"]),
+        .testTarget(name: "SigningTests", dependencies: ["Signing"]),
     ]
 )

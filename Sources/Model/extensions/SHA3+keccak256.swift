@@ -1,5 +1,5 @@
 import Foundation
-import CryptoSwift
+import class CryptoSwift.SHA3
 
 public extension SHA3 {
     static func keccak256(data: ByteArray) -> ByteArray {

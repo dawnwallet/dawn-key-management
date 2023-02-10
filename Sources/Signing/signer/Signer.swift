@@ -11,12 +11,14 @@ enum Error: Swift.Error {
     case parseECDSA
 }
 
-protocol Signer {
+public protocol Signer {
     var rawBytes: ByteArray { get }
     func sign(_ _hash: ByteArray) throws -> Signature
 }
 
-extension Signer where Self: EthereumPrivateKey {
+extension EthereumPrivateKey: Signer { }
+
+public extension Signer where Self: EthereumPrivateKey {
 
     func sign(_ digest: ByteArray) throws -> Signature {
         // Mutable hash

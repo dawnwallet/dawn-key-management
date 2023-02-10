@@ -1,5 +1,5 @@
 import Foundation
-import CryptoSwift
+import class CryptoSwift.SHA3
 
 extension String {
 

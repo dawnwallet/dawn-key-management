@@ -6,14 +6,14 @@ public final class EthereumPrivateKey {
         static var secp256k1Size = 65
     }
 
-    enum KeyError: Swift.Error {
+    public enum KeyError: Swift.Error {
         case generatingPublicKey
         case privateKeyContext
     }
 
-    internal let rawBytes: ByteArray
+    public let rawBytes: [UInt8]
 
-    public init(rawBytes: ByteArray) {
+    public init(rawBytes: [UInt8]) {
         self.rawBytes = rawBytes
         let _ = self.rawBytes.withUnsafeBufferPointer { pointer in
             mlock(pointer.baseAddress, pointer.count)

@@ -1,4 +1,3 @@
-import CryptoSwift
 import Foundation
 
 public struct EthereumAddress {
@@ -18,7 +17,7 @@ public struct EthereumAddress {
 
     /// Initialized an ethereum address with a string representation.
     public init(hex: String) throws {
-        guard hex.count == 40 || hex.count == 42, hex.count == 40 && hex.hasPrefix("0x") else {
+        guard hex.count == 40 || hex.count == 42 || (hex.count == 40 && hex.hasPrefix("0x")) else {
             throw Error.incorrectLength
         }
 

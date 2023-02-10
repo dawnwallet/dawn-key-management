@@ -18,6 +18,12 @@ public struct EthereumPublicKey {
         return rawBytes.count == Constants.secp256k1Size
     }
 
+    public var address: String? {
+        guard isValid() else { return nil }
+        guard let address = addressBytes() else { return nil }
+        return address.hex.toCheckSumString
+    }
+
     public func addressBytes() -> ByteArray? {
         let hash = SHA3.keccak256(data: rawBytes)
 
