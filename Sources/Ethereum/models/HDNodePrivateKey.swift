@@ -1,9 +1,10 @@
 import Foundation
+import CryptoSwift
+import BigInt
+
 import typealias Model.ByteArray
 import struct Model.EthereumPublicKey
 import class Model.EthereumPrivateKey
-import CryptoSwift
-import BigInt
 
 public final class HDNodePrivateKey {
 

@@ -1,10 +1,11 @@
 import Foundation
-import typealias Model.ByteArray
 import MnemonicSwift
+import CryptoSwift
+
+import typealias Model.ByteArray
 import class Model.EthereumPrivateKey
 import struct Model.EthereumPublicKey
 import struct Model.EthereumAddress
-import CryptoSwift
 
 public final class HDNodeWallet {
 
@@ -48,18 +49,20 @@ public final class HDNodeWallet {
     }
 
     public func getAddress(at index: UInt32) throws -> EthereumAddress {
-        let publicKey = try generateExternalPrivateKey(at: index)
-            .publicKey(compressed: false)
-        return try EthereumAddress(publicKey: publicKey)
+        let privateKey = try generateExternalPrivateKey(at: index)
+        let account = EthereumWallet(privateKey: privateKey)
+        return try account.address
     }
 
     public func getPublicKey(at index: UInt32) throws -> EthereumPublicKey {
-        try generateExternalPrivateKey(at: index)
-            .publicKey(compressed: true)
+        let privateKey = try generateExternalPrivateKey(at: index)
+        let account = EthereumWallet(privateKey: privateKey)
+        return try account.publicKey
     }
 
-    public func generateExternalPrivateKey(at index: UInt32) throws -> HDNodePrivateKey {
-        return try ethereumPrivateKey(index)
+    public func generateExternalPrivateKey(at index: UInt32) throws -> EthereumPrivateKey {
+        let nodePrivateKey = try ethereumPrivateKey(index)
+        return EthereumPrivateKey(rawBytes: nodePrivateKey.data.bytes)
     }
 
     private func ethereumPrivateKey(_ index: UInt32) throws -> HDNodePrivateKey {

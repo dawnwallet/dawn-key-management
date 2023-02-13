@@ -4,7 +4,6 @@ import typealias Model.ByteArray
 import secp256k1
 
 extension HDNodePrivateKey {
-
     func generateChildKey(
         privateKey: ByteArray,
         pk: ArraySlice<UInt8>

@@ -12,10 +12,10 @@ final class KeyDecryptor: KeyDecrypting {
 
         // 2. Decrypt privateKey using the secret reference, and ciphertext
         var error: Unmanaged<CFError>?
-        let plainTextData = SecKeyCreateDecryptedData(secret as! SecKey, Constants.algorithm, cipherText as CFData, &error) as! Data?
+        let plainTextData = SecKeyCreateDecryptedData(secret as! SecKey, Constants.algorithm, cipherText as CFData, &error) as Data?
 
         // 3. Return the Private Key using the array of bytes
-        return try EthereumPrivateKey(rawBytes: plainTextData!.bytes)
+        return EthereumPrivateKey(rawBytes: plainTextData!.bytes)
     }
 
     private func secretReference(with reference: String, cipherText: Data) throws -> CFTypeRef? {

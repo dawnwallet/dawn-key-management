@@ -9,8 +9,14 @@ public final class EthereumAccount: Identifiable {
 
     public let walletDirectory: WriterDirectory
 
-    public init(walletDirectory: WriterDirectory = WalletWriterDirectory(fileSubfolder: "accounts/")) {
+    public init(walletDirectory: WriterDirectory) {
         self.walletDirectory = walletDirectory
+    }
+}
+
+extension EthereumAccount {
+    public func insert(account: Codable, at location: String) throws {
+        try walletDirectory.write(account, at: location)
     }
 }
 

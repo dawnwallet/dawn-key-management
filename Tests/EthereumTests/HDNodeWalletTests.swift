@@ -10,7 +10,7 @@ class EthereumAddressTests: XCTestCase {
     var seedBytes: ByteArray!
     var sut: HDNodeWallet!
 
-    // Useful tool: https://iancoleman.io/bip39/
+    // Test suite: https://iancoleman.io/bip39/
 
     override func setUp() {
         self.seedPhrase = "final eight liquid monitor razor knee walnut border that soft salt van"
@@ -19,13 +19,13 @@ class EthereumAddressTests: XCTestCase {
 
     func test_node_wallet_generates() throws {
         self.sut = try HDNodeWallet()
-        let hexPrivateKey = try sut.generateExternalPrivateKey(at: 0).data.toHexString().withPrefix
+        let hexPrivateKey = try sut.generateExternalPrivateKey(at: 0).rawBytes.toHexString().withPrefix
         XCTAssertNoThrow(hexPrivateKey)
     }
 
     func test_private_key_account_0() throws {
         self.sut = try HDNodeWallet(mnemonic: seedPhrase)
-        let hexPrivateKey = try sut.generateExternalPrivateKey(at: 0).data.toHexString().withPrefix
+        let hexPrivateKey = try sut.generateExternalPrivateKey(at: 0).rawBytes.toHexString().withPrefix
         XCTAssertEqual(
             hexPrivateKey, "0x65b840595eb77c026916ffacd1839fa277b38af2209214244f12e1e88cf1cf03"
         )
@@ -65,7 +65,7 @@ class EthereumAddressTests: XCTestCase {
                 "0xf3755bbb4f28248e2906869991a70650c1c01498c446571f16345b13a9291876",
             ]
             let privateKey = try sut.generateExternalPrivateKey(at: UInt32(i))
-            XCTAssertEqual(privateKey.data.toHexString().withPrefix, expect[i])
+            XCTAssertEqual(privateKey.rawBytes.toHexString().withPrefix, expect[i])
         }
     }
 
