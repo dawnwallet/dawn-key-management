@@ -1,7 +1,7 @@
 import Foundation
 import class CryptoSwift.SHA3
 
-extension String {
+public extension String {
 
     var withPrefix: String {
         "0x\(self)"

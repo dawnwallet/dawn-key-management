@@ -20,10 +20,7 @@ public struct EthereumAddress {
     /// - Hex must be injected in checksum format
     /// - Parameter hex:Hex string with either with 0x prefix or without
     public init(hex: String) throws {
-        guard hex.count == 40 || hex.count == 42 else {
-            throw Error.incorrectLength
-        }
-        guard hex.count == 40 && hex.hasPrefix("0x") else {
+        guard hex.count == 40 || hex.count == 42 || (hex.count == 40 && hex.hasPrefix("0x")) else {
             throw Error.incorrectLength
         }
 

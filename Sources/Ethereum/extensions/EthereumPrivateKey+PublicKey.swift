@@ -3,7 +3,7 @@ import class Model.EthereumPrivateKey
 import struct Model.EthereumPublicKey
 import secp256k1
 
-/// Get Public Key from the Private Key
+/// Generate the Public Key from the Private Key
 extension EthereumPrivateKey {
     func publicKey(compressed: Bool) throws -> EthereumPublicKey {
         /// Create a secp256k1 context object (in dynamically allocated memory)
