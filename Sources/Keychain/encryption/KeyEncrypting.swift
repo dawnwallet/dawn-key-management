@@ -6,6 +6,12 @@ protocol KeyEncrypting {
 
 final class KeyEncryptor: KeyEncrypting {
 
+    private let security: SecurityWrapper
+
+    init(security: SecurityWrapper = SecurityWrapperImp()) {
+        self.security = security
+    }
+
     enum Error: Swift.Error {
         case referenceNotFound
         case unexpectedStatus(OSStatus)
@@ -21,23 +27,24 @@ final class KeyEncryptor: KeyEncrypting {
     ///   - reference: Reference used to place the generated secret
     /// - Returns: Ciphertext
     func encrypt(_ privateKey: Data, with reference: String) throws -> CFData {
-        let secret: SecKey
+        let secretReference: SecKey
         do {
             // 1. Check if there is a secret stored in the secure enclave using the address as tag (tag is not involved in the encryption process, it's used only to fetch the secret reference)
-            secret = try retrieveSecret(with: reference)
+            // Value returned is the reference used to interact with the secure enclave. The secret itself never gets exposed.
+            secretReference = try retrieveSecret(with: reference)
         } catch {
             // 2. If not, a secret using the address as tag is generated
-            secret = try generateSecret(with: reference)
+            secretReference = try generateSecret(with: reference)
         }
 
         // 3. Resolve the public key using the reference retrieved / generated before
-        guard let publicKey = SecKeyCopyPublicKey(secret) else {
+        guard let publicKey = security.SecKeyCopyPublicKey(secretReference) else {
             throw Error.resolvingPublicKey
         }
 
         // 4. Encrypt the private key data using the secret reference applying the eciesEncryptionCofactorVariableIVX963SHA256AESGCM algorithm
         var encryptionError: Unmanaged<CFError>?
-        guard let ciphertext = SecKeyCreateEncryptedData(publicKey, Constants.algorithm, privateKey as CFData, &encryptionError) else {
+        guard let ciphertext = security.SecKeyCreateEncryptedData(publicKey, Constants.algorithm, privateKey as CFData, &encryptionError) else {
             throw Error.failedEncryption
         }
 
@@ -56,7 +63,7 @@ final class KeyEncryptor: KeyEncrypting {
 
         // SecItemCopyMatching will attempt to copy the secret reference identified by the query to the reference secretRef
         var secretRef: CFTypeRef?
-        let status = SecItemCopyMatching(
+        let status = security.SecItemCopyMatching(
             query as CFDictionary,
             &secretRef
         )
@@ -78,7 +85,7 @@ final class KeyEncryptor: KeyEncrypting {
     private func generateSecret(with reference: String) throws -> SecKey {
         var error: Unmanaged<CFError>?
         let query = secretQuery(with: reference)
-        guard let secKey = SecKeyCreateRandomKey(query as CFDictionary, &error) else {
+        guard let secKey = security.SecKeyCreateRandomKey(query as CFDictionary, &error) else {
             throw error!.takeRetainedValue() as Swift.Error
         }
         return secKey
