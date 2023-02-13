@@ -1,6 +1,9 @@
 import Foundation
+import class Model.EthereumPrivateKey
+import struct Model.EthereumPublicKey
+import struct Model.EthereumAddress
 
-public final struct EthereumWallet {
+public struct EthereumWallet {
 
     private let privateKey: EthereumPrivateKey
 
@@ -9,12 +12,16 @@ public final struct EthereumWallet {
     }
 
     var publicKey: EthereumPublicKey {
-        privateKey.publicKey(compressed: false)
+        get throws {
+            try privateKey.publicKey(compressed: false)
+        }
     }
 
     var address: EthereumAddress {
-        let publicKey = try privateKey
-            .publicKey(compressed: false)
-        return try EthereumAddress(publicKey: publicKey)
+        get throws {
+            let publicKey = try privateKey
+                .publicKey(compressed: false)
+            return try EthereumAddress(publicKey: publicKey)
+        }
     }
 }
