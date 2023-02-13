@@ -6,28 +6,28 @@ import secp256k1
 extension HDNodePrivateKey {
     func generateChildKey(
         privateKey: ByteArray,
-        pk: ArraySlice<UInt8>
+        derivedPrivateKey: ArraySlice<UInt8>
     ) throws -> ByteArray {
+        // Mutable privateKey
+        var rawVariable = privateKey
 
+        // 1. Create a secp256k1 context object, internally it uses malloc to allocate its memory.
         guard let context = secp256k1_context_create(UInt32(SECP256K1_CONTEXT_VERIFY)) else {
             throw EthereumPrivateKey.KeyError.privateKeyContext
         }
 
+        // 2. Defer executes code just before transferring program control outside of the scope. In case this happens, we destroy the context object
         defer { secp256k1_context_destroy(context) }
 
-        var rawVariable = privateKey
-
-        if rawVariable.withUnsafeMutableBytes({ privateKeyBytes -> Int32 in
-            pk.withUnsafeBytes { factorBytes -> Int32 in
-                guard let factorPointer = factorBytes.bindMemory(to: UInt8.self).baseAddress else {
-                    return 0
-                }
-                guard let privateKeyPointer = privateKeyBytes.baseAddress?.assumingMemoryBound(to: UInt8.self) else { return 0 }
-                return secp256k1_ec_privkey_tweak_add(context, privateKeyPointer, factorPointer)
-            }
-        }) == 0 {
-            throw EthereumPrivateKey.KeyError.privateKeyContext
+        // 4. Get access of the underlying pointer of the private key, as required for secp256k1_ec_privkey_tweak_add function
+        let status = rawVariable.withUnsafeMutableBytes { privateKeyBytes -> Int32 in
+            // 5. We typed the returned pointer
+            guard let privateKeyPointer = privateKeyBytes.baseAddress?.assumingMemoryBound(to: UInt8.self) else { return 0 }
+            return secp256k1_ec_seckey_tweak_add(context, privateKeyPointer, derivedPrivateKey.bytes)
         }
+
+        // 6. Throw an error in case status is not true
+        guard status == 1 else { throw Error.memoryBound }
         return rawVariable
     }
 }

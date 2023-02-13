@@ -74,7 +74,7 @@ extension HDNodePrivateKey {
         let parentKey = digest[0..<32]
         let chainCode = digest[32..<64]
 
-        let childKey = try generateChildKey(privateKey: key.rawBytes, pk: parentKey)
+        let childKey = try generateChildKey(privateKey: key.rawBytes, derivedPrivateKey: parentKey)
 
         return HDNodePrivateKey(
             key: EthereumPrivateKey(rawBytes: childKey),
@@ -83,12 +83,5 @@ extension HDNodePrivateKey {
             parentFingerprint: self.parentFingerprint,
             childNumber: childNumber
         )
-    }
-}
-
-extension UInt32 {
-    var data: Data {
-        var int = self
-        return Data(bytes: &int, count: MemoryLayout<UInt32>.size)
     }
 }
