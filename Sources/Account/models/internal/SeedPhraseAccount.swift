@@ -7,12 +7,9 @@ import Foundation
 public struct SeedPhraseAccount: Codable {
     public let id: String
     public let addresses: [Int: PrivateKeyAccount]
-    public let cipherText: Data
 
-    public init(id: String = UUID().uuidString, addresses: [Int: PrivateKeyAccount], cipherText: Data) {
+    public init(id: String = UUID().uuidString, addresses: [Int: PrivateKeyAccount]) {
         self.id = id
         self.addresses = addresses
-        self.cipherText = cipherText
     }
 }
-

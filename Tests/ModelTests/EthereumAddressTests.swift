@@ -5,7 +5,7 @@ import XCTest
 
 class EthereumAddressTests: XCTestCase {
 
-    func test_bytes_to_data() throws {
+    func test_address_to_data() throws {
         let address = try EthereumAddress(hex: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045")
         XCTAssertEqual(address.eip55Description, "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045")
     }

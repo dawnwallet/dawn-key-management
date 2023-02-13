@@ -16,7 +16,6 @@ public final class EthereumAccount: Identifiable {
 
 /// Seed Phrase Account methods
 extension EthereumAccount {
-
     public func fetchSeedPhraseAccounts() throws -> [SeedPhraseAccount?] {
         let seedPhraseAccount: [SeedPhraseAccount?] = try walletDirectory.retrieve(
             objectType: SeedPhraseAccount.self
