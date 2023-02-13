@@ -65,6 +65,6 @@ public extension Signer where Self: EthereumPrivateKey {
 
         secp256k1_ecdsa_recoverable_signature_serialize_compact(context, &signature, &recid, recoverableSignature)
 
-        return Signature(v: UInt(recid), r: Array(signature[0..<32]), s: Array(signature[32..<64]))
+        return Signature(r: Array(signature[0..<32]), s: Array(signature[32..<64]), v: UInt(recid))
     }
 }
