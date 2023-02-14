@@ -56,17 +56,18 @@ extension EthereumWallet {
         return self
     }
 
-    @discardableResult
-    public func decryptWallet(with address: String) throws -> EthereumWallet {
+    static func decryptWallet(with address: String) throws -> EthereumWallet {
         // 1. Get the ciphertext stored in the keychai
-        guard let ciphertext = try storage.get(key: address) else {
+        guard let ciphertext = try KeyStorage().get(key: address) else {
             throw Error.parseECDSA
         }
 
         // 2. Decrypt the ciphertext
-        let privateKey = try decrypt.decrypt(address, cipherText: ciphertext)
+        let privateKey = try KeyDecryptor().decrypt(address, cipherText: ciphertext)
 
         // 3. Return the wallet representation of the private key
         return EthereumWallet(privateKey: privateKey)
     }
 }
+
+EthereumWallet.decryptWallet(with: "")
