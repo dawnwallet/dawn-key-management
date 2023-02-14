@@ -9,21 +9,21 @@ public protocol SecurityWrapper {
 }
 
 /// Security wrapper used to easily unit test any interaction with the Keychain
-final class SecurityWrapperImp: SecurityWrapper {
+public final class SecurityWrapperImp: SecurityWrapper {
 
-    func SecKeyCopyPublicKey(_ key: SecKey) -> SecKey? {
-        return Security.SecKeyCopyPublicKey(key)
+    public func SecKeyCopyPublicKey(_ key: SecKey) -> SecKey? {
+        Security.SecKeyCopyPublicKey(key)
     }
 
-    func SecKeyCreateEncryptedData(_ key: SecKey, _ algorithm: SecKeyAlgorithm, _ plaintext: CFData, _ error: UnsafeMutablePointer<Unmanaged<CFError>?>?) -> CFData? {
+    public func SecKeyCreateEncryptedData(_ key: SecKey, _ algorithm: SecKeyAlgorithm, _ plaintext: CFData, _ error: UnsafeMutablePointer<Unmanaged<CFError>?>?) -> CFData? {
         Security.SecKeyCreateEncryptedData(key, algorithm, plaintext, error)
     }
 
-    func SecItemCopyMatching(_ query: CFDictionary, _ result: UnsafeMutablePointer<CFTypeRef?>?) -> OSStatus {
+    public func SecItemCopyMatching(_ query: CFDictionary, _ result: UnsafeMutablePointer<CFTypeRef?>?) -> OSStatus {
         Security.SecItemCopyMatching(query, result)
     }
 
-    func SecKeyCreateRandomKey(_ parameters: CFDictionary, _ error: UnsafeMutablePointer<Unmanaged<CFError>?>?) -> SecKey? {
+    public func SecKeyCreateRandomKey(_ parameters: CFDictionary, _ error: UnsafeMutablePointer<Unmanaged<CFError>?>?) -> SecKey? {
         Security.SecKeyCreateRandomKey(parameters, error)
     }
 }

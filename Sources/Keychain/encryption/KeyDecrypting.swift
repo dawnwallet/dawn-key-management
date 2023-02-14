@@ -5,7 +5,10 @@ protocol KeyDecrypting {
     func decrypt(_ address: String, cipherText: Data) throws -> EthereumPrivateKey
 }
 
-final class KeyDecryptor: KeyDecrypting {
+public final class KeyDecryptor: KeyDecrypting {
+
+    public init() { }
+
     public func decrypt(_ address: String, cipherText: Data) throws -> EthereumPrivateKey {
         // 1. Get the reference of the secret stored in the secure enclave
         let secret = try secretReference(with: address, cipherText: cipherText)

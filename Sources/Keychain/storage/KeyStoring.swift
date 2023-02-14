@@ -1,13 +1,16 @@
 import Foundation
 
 protocol KeyStoring {
-    func set(data: Data, key: String) -> OSStatus
-    func get(key: String) -> Data?
+    func set(data: Data, key: String) throws -> OSStatus
+    func get(key: String) throws -> Data?
 }
 
-final class KeyStorage: KeyStoring {
+public final class KeyStorage: KeyStoring {
 
-    func set(data: Data, key: String) -> OSStatus {
+    public init() { }
+
+    @discardableResult
+    public func set(data: Data, key: String) throws -> OSStatus {
         let query = [
             kSecClass as String: kSecClassGenericPassword as String,
             kSecAttrAccount as String: key,
@@ -18,7 +21,7 @@ final class KeyStorage: KeyStoring {
         return SecItemAdd(query as CFDictionary, nil)
     }
 
-    func get(key: String) -> Data? {
+    public func get(key: String) throws -> Data? {
         let query = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: key,

@@ -7,7 +7,7 @@ import class Model.EthereumPrivateKey
 import struct Model.EthereumPublicKey
 import struct Model.EthereumAddress
 
-public final class HDNodeWallet {
+public final class HDEthereumWallet {
 
     private let privateKey: HDNodePrivateKey
     private let seed: ByteArray

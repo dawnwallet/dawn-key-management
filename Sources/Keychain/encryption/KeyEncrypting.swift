@@ -1,14 +1,18 @@
 import Foundation
 
-protocol KeyEncrypting {
+public protocol KeyEncrypting {
     func encrypt(_ privateKey: Data, with reference: String) throws -> CFData
 }
 
-final class KeyEncryptor: KeyEncrypting {
+public final class KeyEncryptor: KeyEncrypting {
 
     private let security: SecurityWrapper
 
-    init(security: SecurityWrapper = SecurityWrapperImp()) {
+    public convenience init() {
+        self.init(security: SecurityWrapperImp())
+    }
+
+    init(security: SecurityWrapper) {
         self.security = security
     }
 
@@ -26,7 +30,7 @@ final class KeyEncryptor: KeyEncrypting {
     ///   - privateKey: Private key
     ///   - reference: Reference used to place the generated secret
     /// - Returns: Ciphertext
-    func encrypt(_ privateKey: Data, with reference: String) throws -> CFData {
+    public func encrypt(_ privateKey: Data, with reference: String) throws -> CFData {
         let secretReference: SecKey
         do {
             // 1. Check if there is a secret stored in the secure enclave using the address as tag (tag is not involved in the encryption process, it's used only to fetch the secret reference)
