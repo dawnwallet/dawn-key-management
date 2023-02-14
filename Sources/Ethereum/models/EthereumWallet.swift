@@ -69,5 +69,3 @@ extension EthereumWallet {
         return EthereumWallet(privateKey: privateKey)
     }
 }
-
-EthereumWallet.decryptWallet(with: "")
