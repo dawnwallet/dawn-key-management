@@ -24,7 +24,8 @@ let package = Package(
         .target(name: "Ethereum", dependencies: [
             .product(name: "secp256k1", package: "secp256k1.swift"),
             "Model",
-            "MnemonicSwift"
+            "MnemonicSwift",
+            "Keychain"
         ]),
         .testTarget(name: "EthereumTests", dependencies: ["Ethereum"]),
         .target(name: "Keychain", dependencies: ["Model"]),

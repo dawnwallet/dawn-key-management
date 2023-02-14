@@ -1,6 +1,5 @@
 import Foundation
 import CryptoSwift
-import BigInt
 
 import typealias Model.ByteArray
 import struct Model.EthereumPublicKey
