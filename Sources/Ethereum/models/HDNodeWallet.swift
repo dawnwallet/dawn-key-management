@@ -10,6 +10,7 @@ import struct Model.EthereumAddress
 public final class HDNodeWallet {
 
     private let privateKey: HDNodePrivateKey
+    private let seed: ByteArray
 
     public enum Error: Swift.Error {
         case retrieveSeedBytes
@@ -39,6 +40,7 @@ public final class HDNodeWallet {
     public init(seed: ByteArray) throws {
         let hmac = HMAC(key: Constants.bitcoinSeed, variant: .sha2(.sha512))
         let computedHMAC = try hmac.authenticate(seed)
+        self.seed = seed
         self.privateKey = HDNodePrivateKey(
             key: EthereumPrivateKey(rawBytes: ByteArray(computedHMAC[0..<32])),
             chainCode: ByteArray(computedHMAC[32..<64]),

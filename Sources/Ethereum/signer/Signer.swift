@@ -12,13 +12,11 @@ enum Error: Swift.Error {
 }
 
 public protocol Signer {
-    var rawBytes: ByteArray { get }
+    var privateKey: EthereumPrivateKey { get }
     func sign(_ _hash: ByteArray) throws -> Signature
 }
 
-extension EthereumPrivateKey: Signer { }
-
-public extension Signer where Self: EthereumPrivateKey {
+public extension EthereumWallet {
 
     func sign(_ digest: ByteArray) throws -> Signature {
         // Mutable hash
@@ -49,7 +47,7 @@ public extension Signer where Self: EthereumPrivateKey {
         // 6. Create a recoverable ECDSA signature (64 bytes + recovery id)
         // secp256k1_ecdsa_sign_recoverable will place the signature at signaturePointer. signaturePointer will hold a parsed ECDSA signature.
         // Returns: 1 == signature created; 0 == generation function failed
-        guard secp256k1_ecdsa_sign_recoverable(context, signaturePointer, &hash, rawBytes, nil, nil) == 1 else {
+        guard secp256k1_ecdsa_sign_recoverable(context, signaturePointer, &hash, privateKey.rawBytes, nil, nil) == 1 else {
             throw Error.parseECDSA
         }
 
