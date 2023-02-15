@@ -48,7 +48,7 @@ extension EthereumAccount {
 
 extension EthereumAccount {
 
-    func signDigest(_ digest: ByteArray) throws -> Signature {
+    public func signDigest(_ digest: ByteArray) throws -> Signature {
         let privateKey = try decryptWallet()
         return try sign(digest, privateKey: privateKey.privateKey)
     }

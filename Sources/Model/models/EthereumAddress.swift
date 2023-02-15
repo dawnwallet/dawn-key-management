@@ -15,7 +15,6 @@ public struct EthereumAddress {
         case invalidCheckSum
     }
 
-
     /// Creates a new EthereumAddress with a given hex string
     /// - Hex must be injected in checksum format
     /// - Parameter hex:Hex string with either with 0x prefix or without
