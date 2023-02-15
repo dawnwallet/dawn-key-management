@@ -5,20 +5,9 @@ import typealias Model.Signature
 import typealias Model.ByteArray
 import class Model.EthereumPrivateKey
 
-enum Error: Swift.Error {
-    case memoryBound
-    case createContext
-    case parseECDSA
-}
+extension EthereumAccount {
 
-public protocol Signer {
-    var privateKey: EthereumPrivateKey { get }
-    func sign(_ _hash: ByteArray) throws -> Signature
-}
-
-public extension EthereumWallet {
-
-    func sign(_ digest: ByteArray) throws -> Signature {
+    func sign(_ digest: ByteArray, privateKey: EthereumPrivateKey) throws -> Signature {
         // Mutable hash
         var hash = digest
 
@@ -30,12 +19,12 @@ public extension EthereumWallet {
 
         // 3. We return a typed pointer to the memory we've bound to the ECDSA signature type
         guard let signaturePointer = ecdsaMemoryStorage?.assumingMemoryBound(to: secp256k1_ecdsa_recoverable_signature.self) else {
-            throw Error.memoryBound
+            throw EthereumAccount.Error.memoryBound
         }
 
         // 4. Create a secp256k1 context object, internally it uses malloc to allocate its memory.
         guard let context = secp256k1_context_create(UInt32(SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_VERIFY)) else {
-            throw Error.createContext
+            throw EthereumAccount.Error.createContext
         }
 
         // 5. Defer executes code just before transferring program control outside of the scope. In case this happens, we free the allocated storage of the ECDSA signature, and destroy the context object
@@ -48,7 +37,7 @@ public extension EthereumWallet {
         // secp256k1_ecdsa_sign_recoverable will place the signature at signaturePointer. signaturePointer will hold a parsed ECDSA signature.
         // Returns: 1 == signature created; 0 == generation function failed
         guard secp256k1_ecdsa_sign_recoverable(context, signaturePointer, &hash, privateKey.rawBytes, nil, nil) == 1 else {
-            throw Error.parseECDSA
+            throw EthereumAccount.Error.parseECDSA
         }
 
         // Serialize an ECDS signature in compact format (64 bytes + recovery id).

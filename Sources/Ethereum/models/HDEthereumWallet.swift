@@ -9,7 +9,7 @@ import struct Model.EthereumAddress
 
 public final class HDEthereumWallet {
 
-    private let privateKey: HDNodePrivateKey
+    private let privateKey: HDEthereumPrivateKey
     private let seed: ByteArray
 
     public enum Error: Swift.Error {
@@ -41,7 +41,7 @@ public final class HDEthereumWallet {
         let hmac = HMAC(key: Constants.bitcoinSeed, variant: .sha2(.sha512))
         let computedHMAC = try hmac.authenticate(seed)
         self.seed = seed
-        self.privateKey = HDNodePrivateKey(
+        self.privateKey = HDEthereumPrivateKey(
             key: EthereumPrivateKey(rawBytes: ByteArray(computedHMAC[0..<32])),
             chainCode: ByteArray(computedHMAC[32..<64]),
             depth: 0,
@@ -67,7 +67,7 @@ public final class HDEthereumWallet {
         return EthereumPrivateKey(rawBytes: nodePrivateKey.data.bytes)
     }
 
-    private func ethereumPrivateKey(_ index: UInt32) throws -> HDNodePrivateKey {
+    private func ethereumPrivateKey(_ index: UInt32) throws -> HDEthereumPrivateKey {
         return try privateKey
             .derivePath()
             .deriveChild(index)

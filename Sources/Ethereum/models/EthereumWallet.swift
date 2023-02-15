@@ -11,17 +11,15 @@ public class EthereumWallet {
 
     internal let privateKey: EthereumPrivateKey
     private let encrypt: KeyEncryptor
-    private let decrypt: KeyDecryptor
     private let storage: KeyStorage
 
-    convenience init(privateKey: EthereumPrivateKey) {
-        self.init(privateKey: privateKey, encrypt: KeyEncryptor(), decrypt: KeyDecryptor(), storage: KeyStorage())
+    public convenience init(privateKey: EthereumPrivateKey) {
+        self.init(privateKey: privateKey, encrypt: KeyEncryptor(), storage: KeyStorage())
     }
 
-    public init(privateKey: EthereumPrivateKey, encrypt: KeyEncryptor, decrypt: KeyDecryptor, storage: KeyStorage) {
+    private init(privateKey: EthereumPrivateKey, encrypt: KeyEncryptor, storage: KeyStorage) {
         self.privateKey = privateKey
         self.encrypt = encrypt
-        self.decrypt = decrypt
         self.storage = storage
     }
 
@@ -54,18 +52,5 @@ extension EthereumWallet {
         try storage.set(data: ciphertext as Data, key: address)
 
         return self
-    }
-
-    static func decryptWallet(with address: String) throws -> EthereumWallet {
-        // 1. Get the ciphertext stored in the keychai
-        guard let ciphertext = try KeyStorage().get(key: address) else {
-            throw Error.parseECDSA
-        }
-
-        // 2. Decrypt the ciphertext
-        let privateKey = try KeyDecryptor().decrypt(address, cipherText: ciphertext)
-
-        // 3. Return the wallet representation of the private key
-        return EthereumWallet(privateKey: privateKey)
     }
 }

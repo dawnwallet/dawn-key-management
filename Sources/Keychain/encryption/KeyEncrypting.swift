@@ -61,7 +61,7 @@ public final class KeyEncryptor: KeyEncrypting {
             kSecClass as String: kSecClassKey,
             kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
             kSecAttrApplicationTag as String: reference.data(using: .utf8) as Any,
-            kSecAttrAccessGroup as String: "",
+            kSecAttrAccessGroup as String: Constants.accessGroup,
             kSecReturnRef as String: true,
         ]
 
