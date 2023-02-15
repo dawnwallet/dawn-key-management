@@ -1,4 +1,5 @@
 // swift-tools-version: 5.7
+// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
@@ -6,9 +7,6 @@ let package = Package(
     name: "KeyManagement",
     platforms: [.iOS(.v16)],
     products: [
-        .library(
-            name: "Account",
-            targets: ["Account"]),
         .library(
             name: "Ethereum",
             targets: ["Ethereum"])
@@ -19,8 +17,6 @@ let package = Package(
         .package(url: "https://github.com/zcash-hackworks/MnemonicSwift", from: "2.2.4")
     ],
     targets: [
-        .target(name: "Account", dependencies: ["Model"]),
-        .testTarget(name: "AccountTests", dependencies: ["Account"]),
         .target(name: "Ethereum", dependencies: [
             .product(name: "secp256k1", package: "secp256k1.swift"),
             "Model",
