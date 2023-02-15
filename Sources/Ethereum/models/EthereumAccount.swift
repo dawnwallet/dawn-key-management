@@ -5,7 +5,7 @@ import class Keychain.KeyEncryptor
 import class Keychain.KeyDecryptor
 import class Keychain.KeyStorage
 
-final class EthereumAccount {
+public final class EthereumAccount {
 
     enum Error: Swift.Error {
         case wrongAddress
@@ -18,11 +18,11 @@ final class EthereumAccount {
     private let decrypt: KeyDecryptor
     private let storage: KeyStorage
 
-    convenience init(address: EthereumAddress) {
+    public convenience init(address: EthereumAddress) {
         self.init(address: address, storage: KeyStorage(), decrypt: KeyDecryptor())
     }
 
-    public init(address: EthereumAddress, storage: KeyStorage, decrypt: KeyDecryptor) {
+    private init(address: EthereumAddress, storage: KeyStorage, decrypt: KeyDecryptor) {
         self.address = address
         self.storage = storage
         self.decrypt = decrypt
