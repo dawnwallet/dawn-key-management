@@ -59,6 +59,10 @@ public struct EthereumAddress {
     public var eip55Description: String {
         return "\(addressBytes.hex.toCheckSumString)"
     }
+
+    public var bytes: ByteArray {
+        addressBytes
+    }
 }
 
 extension EthereumAddress: Equatable {
