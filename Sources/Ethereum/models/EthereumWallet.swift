@@ -29,7 +29,7 @@ public class EthereumWallet {
         }
     }
 
-    var address: Model.EthereumAddress {
+    public var address: Model.EthereumAddress {
         get throws {
             let publicKey = try privateKey
                 .publicKey(compressed: false)
