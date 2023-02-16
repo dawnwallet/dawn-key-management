@@ -38,7 +38,7 @@ public class EthereumWallet {
     }
 }
 
-// Encryption / Decryption
+// Encryption
 extension EthereumWallet {
     @discardableResult
     public func encryptWallet() throws -> EthereumWallet {

@@ -6,11 +6,15 @@ import typealias Model.ByteArray
 import class Model.EthereumPrivateKey
 import struct Model.EthereumPublicKey
 import struct Model.EthereumAddress
+import class Keychain.KeyEncryptor
+import class Keychain.KeyStorage
 
 public final class HDEthereumWallet {
 
     private let privateKey: HDEthereumPrivateKey
     private let seed: ByteArray
+    private let encrypt: KeyEncryptor
+    private let storage: KeyStorage
 
     public enum Error: Swift.Error {
         case retrieveSeedBytes
@@ -37,10 +41,12 @@ public final class HDEthereumWallet {
 
     /// Creates a new EthereumSeedPhrase with the given seed
     /// - Parameter seed: The seed in bytes format
-    public init(seed: ByteArray) throws {
+    public init(seed: ByteArray, encrypt: KeyEncryptor = KeyEncryptor(), storage: KeyStorage = KeyStorage()) throws {
         let hmac = HMAC(key: Constants.bitcoinSeed, variant: .sha2(.sha512))
         let computedHMAC = try hmac.authenticate(seed)
         self.seed = seed
+        self.encrypt = encrypt
+        self.storage = storage
         self.privateKey = HDEthereumPrivateKey(
             key: EthereumPrivateKey(rawBytes: ByteArray(computedHMAC[0..<32])),
             chainCode: ByteArray(computedHMAC[32..<64]),
@@ -71,5 +77,22 @@ public final class HDEthereumWallet {
         return try privateKey
             .derivePath()
             .deriveChild(index)
+    }
+}
+
+// Encryption / Decryption
+extension HDEthereumWallet {
+    @discardableResult
+    public func encryptSeedPhrase() throws -> String {
+        let seedPhraseId = UUID().uuidString
+        let seedData = Data(seed)
+
+        // 1. Encrypt the seedPhrase using the generated UUID as reference
+        let ciphertext = try encrypt.encrypt(seedData, with: seedPhraseId)
+
+        // 2. Store the ciphertext in the keychain
+        try storage.set(data: ciphertext as Data, key: seedPhraseId)
+
+        return seedPhraseId
     }
 }
