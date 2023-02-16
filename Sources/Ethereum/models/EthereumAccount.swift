@@ -1,6 +1,8 @@
 import Foundation
 import Model
 
+import protocol Keychain.KeyDecrypting
+
 import class Keychain.KeyEncryptor
 import class Keychain.KeyDecryptor
 import class Keychain.KeyStorage
@@ -15,14 +17,14 @@ public final class EthereumAccount {
     }
 
     private let address: EthereumAddress
-    private let decrypt: KeyDecryptor
+    private let decrypt: KeyDecrypting
     private let storage: KeyStorage
 
     public convenience init(address: EthereumAddress) {
         self.init(address: address, storage: KeyStorage(), decrypt: KeyDecryptor())
     }
 
-    private init(address: EthereumAddress, storage: KeyStorage, decrypt: KeyDecryptor) {
+    private init(address: EthereumAddress, storage: KeyStorage, decrypt: KeyDecrypting) {
         self.address = address
         self.storage = storage
         self.decrypt = decrypt
@@ -39,7 +41,7 @@ extension EthereumAccount {
         }
 
         // 2. Decrypt the ciphertext
-        let privateKey = try decrypt.decrypt(address.eip55Description, cipherText: ciphertext)
+        let privateKey = try decrypt.decryptPrivateKey(address.eip55Description, cipherText: ciphertext)
 
         // 3. Return the wallet representation of the private key
         return EthereumWallet(privateKey: privateKey)
@@ -47,6 +49,11 @@ extension EthereumAccount {
 }
 
 extension EthereumAccount {
+
+    public func revealPrivateKey() throws -> ByteArray {
+        let privateKey = try decryptWallet()
+        return privateKey.privateKey.rawBytes
+    }
 
     public func signDigest(_ digest: ByteArray) throws -> Signature {
         let privateKey = try decryptWallet()
