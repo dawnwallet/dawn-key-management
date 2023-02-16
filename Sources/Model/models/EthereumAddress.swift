@@ -60,7 +60,7 @@ public struct EthereumAddress {
         return "\(addressBytes.hex.toCheckSumString)"
     }
 
-    public var bytes: ByteArray {
+    public var bytesDescription: ByteArray {
         addressBytes
     }
 }
