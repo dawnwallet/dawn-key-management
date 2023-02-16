@@ -83,7 +83,7 @@ public final class HDEthereumWallet {
 // Encryption / Decryption
 extension HDEthereumWallet {
     @discardableResult
-    public func encryptSeedPhrase() throws -> String {
+    public func encryptSeedPhrase() throws -> (seed: ByteArray, id: String) {
         let seedPhraseId = UUID().uuidString
         let seedData = Data(seed)
 
@@ -93,6 +93,6 @@ extension HDEthereumWallet {
         // 2. Store the ciphertext in the keychain
         try storage.set(data: ciphertext as Data, key: seedPhraseId)
 
-        return seedPhraseId
+        return (seed: seed, id: seedPhraseId)
     }
 }
