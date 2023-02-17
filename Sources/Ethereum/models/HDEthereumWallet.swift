@@ -92,7 +92,7 @@ public final class HDEthereumWallet {
 }
 
 extension HDEthereumWallet {
-    func revealSeedPhrase() throws -> String {
+    public func revealSeedPhrase() throws -> String {
         return String(decoding: mnemonic, as: UTF8.self)
     }
 }
