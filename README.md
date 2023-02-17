@@ -1,6 +1,6 @@
 # KeyManagement
 
-Dawn Key management provides news sort of APIs that allows you to manage, create, update wallets and sign transactions in ETH. This package leverages the Secure Enclave to keep your keys protected.
+Dawn Key Management provides a new sort of APIs that allows you to manage, create, update wallets and sign transactions in ETH. This package leverages the Secure Enclave to keep your keys protected.
 
 ## Installation
 
