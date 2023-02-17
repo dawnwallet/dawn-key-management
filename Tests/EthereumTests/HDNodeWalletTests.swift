@@ -24,7 +24,7 @@ class EthereumAddressTests: XCTestCase {
     }
 
     func test_private_key_account_0() throws {
-        self.sut = try HDEthereumWallet(mnemonic: seedPhrase)
+        self.sut = try HDEthereumWallet(mnemonicString: seedPhrase)
         let hexPrivateKey = try sut.generateExternalPrivateKey(at: 0).rawBytes.toHexString().withPrefix
         XCTAssertEqual(
             hexPrivateKey, "0x65b840595eb77c026916ffacd1839fa277b38af2209214244f12e1e88cf1cf03"
@@ -32,7 +32,7 @@ class EthereumAddressTests: XCTestCase {
     }
 
     func test_public_key_account_0() throws {
-        self.sut = try HDEthereumWallet(mnemonic: seedPhrase)
+        self.sut = try HDEthereumWallet(mnemonicString: seedPhrase)
         let privateKey = try sut.generateExternalPrivateKey(at: 0)
         let publicKey = try privateKey.publicKey(compressed: true)
         XCTAssertEqual(
@@ -42,7 +42,7 @@ class EthereumAddressTests: XCTestCase {
     }
 
     func test_address_account_0() throws {
-        self.sut = try HDEthereumWallet(mnemonic: seedPhrase)
+        self.sut = try HDEthereumWallet(mnemonicString: seedPhrase)
         let privateKey = try sut.generateExternalPrivateKey(at: 0)
         let publicKey = try privateKey.publicKey(compressed: false)
         let address = try EthereumAddress(publicKey: publicKey)
@@ -50,7 +50,7 @@ class EthereumAddressTests: XCTestCase {
     }
 
     func test_private_key_accounts() throws {
-        self.sut = try HDEthereumWallet(mnemonic: seedPhrase)
+        self.sut = try HDEthereumWallet(mnemonicString: seedPhrase)
         for i in 0..<10 {
             let expect = [
                 "0x65b840595eb77c026916ffacd1839fa277b38af2209214244f12e1e88cf1cf03",
@@ -70,7 +70,7 @@ class EthereumAddressTests: XCTestCase {
     }
 
     func test_public_key_accounts() throws {
-        self.sut = try HDEthereumWallet(mnemonic: seedPhrase)
+        self.sut = try HDEthereumWallet(mnemonicString: seedPhrase)
         for i in 0..<10 {
             let expect = [
                 "0x034a76ce52484736497d1bcdd112469043b6bf0a7a1b05ad25a9ff7d145834b39e",
@@ -91,7 +91,7 @@ class EthereumAddressTests: XCTestCase {
     }
 
     func test_address_accounts() throws {
-        self.sut = try HDEthereumWallet(mnemonic: seedPhrase)
+        self.sut = try HDEthereumWallet(mnemonicString: seedPhrase)
         for i in 0..<10 {
             let expect = [
                 "0xC8f4D897cfE4a24A715268905aA731D3134f8e8f",
