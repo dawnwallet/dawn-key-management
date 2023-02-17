@@ -92,8 +92,8 @@ public final class HDEthereumWallet {
 }
 
 extension HDEthereumWallet {
-    public func revealSeedPhrase() throws -> String {
-        return String(decoding: mnemonic, as: UTF8.self)
+    public func revealSeedPhrase() throws -> ByteArray {
+        return mnemonic
     }
 }
 
