@@ -1,11 +1,6 @@
 import Foundation
-import class Model.EthereumPrivateKey
-import struct Model.EthereumPublicKey
-import struct Model.EthereumAddress
-
-import class Keychain.KeyEncryptor
-import class Keychain.KeyDecryptor
-import class Keychain.KeyStorage
+import Model
+import Keychain
 
 public class EthereumWallet {
 
@@ -38,7 +33,6 @@ public class EthereumWallet {
     }
 }
 
-// Encryption
 extension EthereumWallet {
     @discardableResult
     public func encryptWallet() throws -> EthereumWallet {

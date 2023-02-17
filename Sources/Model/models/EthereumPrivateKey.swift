@@ -29,7 +29,7 @@ public final class EthereumPrivateKey {
     /// Deinit is called immediatly before a class instance is deallocated
     deinit {
         /// Closure called to return the pointer of the contiguous storage for the raw bytes.
-        self.rawBytes.withUnsafeBufferPointer { (pointer) -> Void in
+        let _ = self.rawBytes.withUnsafeBufferPointer { pointer in
             /// Unlock the selected region of address space, starting from the first element of the buffer from the pointer
             /// https://man7.org/linux/man-pages/man2/mlock.2.html
             munlock(pointer.baseAddress, pointer.count)

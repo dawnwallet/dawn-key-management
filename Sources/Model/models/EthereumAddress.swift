@@ -16,7 +16,7 @@ public struct EthereumAddress {
     }
 
     /// Creates a new EthereumAddress with a given hex string
-    /// - Hex must be injected in checksum format
+    /// - Hex must be injected using checksum format
     /// - Parameter hex:Hex string with either with 0x prefix or without
     public init(hex: String) throws {
         guard hex.count == 40 || hex.count == 42 || (hex.count == 40 && hex.hasPrefix("0x")) else {

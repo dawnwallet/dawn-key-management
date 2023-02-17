@@ -1,38 +1,10 @@
 import Foundation
 import CryptoSwift
 
-import typealias Model.ByteArray
-import struct Model.EthereumPublicKey
+import class Model.HDEthereumPrivateKey
 import class Model.EthereumPrivateKey
+import struct Model.EthereumPublicKey
 
-public final class HDEthereumPrivateKey {
-
-    private let key: EthereumPrivateKey
-    private let chainCode: ByteArray
-    private let depth: UInt32
-    private let parentFingerprint: UInt32
-    private let childNumber: UInt32
-
-    public init(
-        key: EthereumPrivateKey,
-        chainCode: ByteArray,
-        depth: UInt32,
-        parentFingerprint: UInt32,
-        childNumber: UInt32
-    ) {
-        self.key = key
-        self.chainCode = chainCode
-        self.depth = depth
-        self.parentFingerprint = parentFingerprint
-        self.childNumber = childNumber
-    }
-
-    internal var data: Data {
-        Data(key.rawBytes)
-    }
-}
-
-//MARK: - Public Key
 extension HDEthereumPrivateKey {
     public func publicKey(compressed: Bool) throws -> EthereumPublicKey {
         try key
@@ -40,7 +12,6 @@ extension HDEthereumPrivateKey {
     }
 }
 
-//MARK: - Derive functions
 extension HDEthereumPrivateKey {
 
     func derivePath() throws -> HDEthereumPrivateKey {

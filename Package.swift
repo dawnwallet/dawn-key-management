@@ -1,5 +1,4 @@
 // swift-tools-version: 5.7
-// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
@@ -8,8 +7,9 @@ let package = Package(
     platforms: [.iOS(.v16)],
     products: [
         .library(
-            name: "Ethereum",
-            targets: ["Ethereum"])
+            name: "Wallet",
+            targets: ["Wallet"]
+        )
     ],
     dependencies: [
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift", from: "1.5.1"),
@@ -17,15 +17,15 @@ let package = Package(
         .package(url: "https://github.com/zcash-hackworks/MnemonicSwift", from: "2.2.4")
     ],
     targets: [
-        .target(name: "Ethereum", dependencies: [
-            .product(name: "secp256k1", package: "secp256k1.swift"),
-            "Model",
-            "MnemonicSwift",
-            "Keychain"
-        ]),
-        .testTarget(name: "EthereumTests", dependencies: ["Ethereum"]),
         .target(name: "Keychain", dependencies: ["Model"]),
         .testTarget(name: "KeychainTests", dependencies: ["Keychain"]),
+        .target(name: "Wallet", dependencies: [
+            "Keychain",
+            "MnemonicSwift",
+            "Model",
+            .product(name: "secp256k1", package: "secp256k1.swift")
+        ]),
+        .testTarget(name: "WalletTests", dependencies: ["Wallet"]),
         .target(name: "Model", dependencies: ["CryptoSwift"]),
         .testTarget(name: "ModelTests", dependencies: ["Model"])
     ]

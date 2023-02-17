@@ -1,5 +1,8 @@
 import Foundation
 import class Model.EthereumPrivateKey
+
+import class Model.HDEthereumPrivateKey
+
 import typealias Model.ByteArray
 import secp256k1
 

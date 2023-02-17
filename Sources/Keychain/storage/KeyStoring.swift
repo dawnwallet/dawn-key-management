@@ -1,6 +1,6 @@
 import Foundation
 
-protocol KeyStoring {
+public protocol KeyStoring {
     func set(data: Data, key: String) throws -> OSStatus
     func get(key: String) throws -> Data?
 }

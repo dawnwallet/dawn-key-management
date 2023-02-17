@@ -1,16 +1,8 @@
 import Foundation
 import MnemonicSwift
 import CryptoSwift
-
-import typealias Model.ByteArray
-import class Model.EthereumPrivateKey
-import struct Model.EthereumPublicKey
-import struct Model.EthereumAddress
-import protocol Keychain.KeyDecrypting
-import protocol Keychain.KeyEncrypting
-import class Keychain.KeyEncryptor
-import class Keychain.KeyStorage
-import class Keychain.KeyDecryptor
+import Model
+import Keychain
 
 public final class HDEthereumWallet {
 
@@ -47,12 +39,7 @@ public final class HDEthereumWallet {
 
     /// Creates a new HDEthereumWallet with the given seed
     /// - Parameter seed: The seed in bytes format
-    public init(
-        mnemonic: ByteArray,
-        encrypt: KeyEncryptor = KeyEncryptor(),
-        decrypt: KeyDecrypting = KeyDecryptor(),
-        storage: KeyStorage = KeyStorage()
-    ) throws {
+    private init(mnemonic: ByteArray) throws {
         let mnemonicString = String(decoding: mnemonic, as: UTF8.self)
         let deterministicSeed: ByteArray = try Mnemonic.deterministicSeedBytes(from: mnemonicString)
         let hmac = HMAC(key: Constants.bitcoinSeed, variant: .sha2(.sha512))
