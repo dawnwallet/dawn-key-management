@@ -17,7 +17,7 @@ dependencies: [
 ## Usage
 
 ### EOA Wallet
-An EOA is represented by `EthereumWallet` object. 
+An EOA is represented by an `EthereumWallet` object. You are required to inject an `EthereumPrivateKey`.
 
 #### Representation
 ```Swift
@@ -32,7 +32,7 @@ An EOA is represented by `EthereumWallet` object.
 ```
 
 ### Account
-An Account is represented by an `EthereumAccount` object. You are required to inject an `EthereumAddress` to have fully access of its capabilities
+An Account is represented by an `EthereumAccount` object. You are required to inject an `EthereumAddress` to have fully access of its capabilities.
 
 ```Swift
   let address = EthereumAddress(hex: "")
@@ -40,17 +40,17 @@ An Account is represented by an `EthereumAccount` object. You are required to in
 ```
 
 #### Signature
-  In case the wallet is been imported before, account has the capability to sign digests.
+  In case the wallet has been imported, account object has the capability to sign digests.
 ```Swift
   account.signDigest([])
 ```
 #### Decryption
-  Account has the capability to reveal its private key
+  It reveals the private key by calling this method.
 ```Swift
   account.revealPrivateKey()
 ```
-### HD Wallet Examples
-### Encryption
+### HD Wallet
+#### Encryption
 ```Swift
   let hdwallet = HDEthereumWallet() || let hdwallet = HDEthereumWallet(mnemonic: "") || let hdwallet = HDEthereumWallet(seed: [])
   hdwallet.encryptSeedPhrase()
