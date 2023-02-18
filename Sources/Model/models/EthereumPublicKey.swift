@@ -1,7 +1,7 @@
 import Foundation
 import class CryptoSwift.SHA3
 
-public struct EthereumPublicKey {
+public final class EthereumPublicKey {
 
     enum Constants {
         static let secp256k1Size = 64

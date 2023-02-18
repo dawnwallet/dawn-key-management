@@ -1,6 +1,6 @@
 import Foundation
 import class Model.EthereumPrivateKey
-import struct Model.EthereumPublicKey
+import class Model.EthereumPublicKey
 import secp256k1
 
 extension EthereumPrivateKey {

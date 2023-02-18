@@ -1,6 +1,6 @@
 import Foundation
 
-/// Class (reference) instead of Struct (value) to avoid duplicated objects in memory
+/// Class (reference) instead of Struct (value) to avoid multiple references to the same Private Key
 public final class EthereumPrivateKey {
 
     enum Constants {

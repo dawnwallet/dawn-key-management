@@ -3,7 +3,7 @@ import CryptoSwift
 
 import class Model.HDEthereumPrivateKey
 import class Model.EthereumPrivateKey
-import struct Model.EthereumPublicKey
+import class Model.EthereumPublicKey
 
 extension HDEthereumPrivateKey {
     public func publicKey(compressed: Bool) throws -> EthereumPublicKey {
