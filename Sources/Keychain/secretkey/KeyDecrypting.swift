@@ -2,14 +2,26 @@ import Foundation
 import Model
 import class Model.EthereumPrivateKey
 
-public protocol KeyDecrypting {
+public protocol KeyDecryptable {
     func decryptSeed(_ id: String, cipherText: Data) throws -> ByteArray
     func decryptPrivateKey(_ address: String, cipherText: Data) throws -> EthereumPrivateKey
 }
 
-public final class KeyDecryptor: KeyDecrypting {
+public final class KeyDecrypting: KeyDecryptable {
 
-    public init() { }
+    enum Error: Swift.Error {
+        case copyingSecret
+    }
+
+    private let security: SecurityWrapper
+
+    public convenience init() {
+        self.init(security: SecurityWrapperImp())
+    }
+
+    private init(security: SecurityWrapper) {
+        self.security = security
+    }
 
     public func decryptSeed(_ id: String, cipherText: Data) throws -> ByteArray {
         let decryptedBytes = try decrypt(id, cipherText: cipherText)
@@ -27,7 +39,7 @@ public final class KeyDecryptor: KeyDecrypting {
 
         // 2. Decrypt privateKey using the secret reference, and ciphertext
         var error: Unmanaged<CFError>?
-        let plainTextData = SecKeyCreateDecryptedData(secret as! SecKey, Constants.algorithm, cipherText as CFData, &error) as Data?
+        let plainTextData = security.SecKeyCreateDecryptedData(secret as! SecKey, Constants.algorithm, cipherText as CFData, &error) as Data?
 
         // 3. Return the Private Key using the array of bytes
         return plainTextData!.bytes
@@ -42,8 +54,8 @@ public final class KeyDecryptor: KeyDecrypting {
             kSecReturnRef as String: true,
         ]
         var raw: CFTypeRef?
-        let status = Security.SecItemCopyMatching(params as CFDictionary, &raw)
-//        guard status == errSecSuccess else { throw  }
+        let status = security.SecItemCopyMatching(params as CFDictionary, &raw)
+        guard status == errSecSuccess else { throw Error.copyingSecret  }
         return raw
     }
 }

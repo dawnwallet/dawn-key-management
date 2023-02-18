@@ -1,10 +1,10 @@
 import Foundation
 
-public protocol KeyEncrypting {
+public protocol KeyEncryptable {
     func encrypt(_ privateKey: Data, with reference: String) throws -> CFData
 }
 
-public final class KeyEncryptor: KeyEncrypting {
+public final class KeyEncrypting: KeyEncryptable {
 
     private let security: SecurityWrapper
 
@@ -12,7 +12,7 @@ public final class KeyEncryptor: KeyEncrypting {
         self.init(security: SecurityWrapperImp())
     }
 
-    init(security: SecurityWrapper) {
+    private init(security: SecurityWrapper) {
         self.security = security
     }
 

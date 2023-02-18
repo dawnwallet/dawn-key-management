@@ -7,7 +7,7 @@ import typealias Model.ByteArray
 import secp256k1
 
 extension HDEthereumPrivateKey {
-    func generateChildKey(
+    func tweakChildKey(
         privateKey: ByteArray,
         derivedPrivateKey: ArraySlice<UInt8>
     ) throws -> ByteArray {

@@ -7,7 +7,15 @@ public protocol KeyStoring {
 
 public final class KeyStorage: KeyStoring {
 
-    public init() { }
+    private let security: SecurityWrapper
+
+    public convenience init() {
+        self.init(security: SecurityWrapperImp())
+    }
+
+    private init(security: SecurityWrapper) {
+        self.security = security
+    }
 
     @discardableResult
     public func set(data: Data, key: String) throws -> OSStatus {
@@ -17,8 +25,7 @@ public final class KeyStorage: KeyStoring {
             kSecValueData as String: data
         ] as [String : Any]
 
-        SecItemDelete(query as CFDictionary)
-        return SecItemAdd(query as CFDictionary, nil)
+        return security.SecItemAdd(query as CFDictionary, nil)
     }
 
     public func get(key: String) throws -> Data? {
@@ -30,10 +37,10 @@ public final class KeyStorage: KeyStoring {
         ] as [String : Any]
 
         var dataTypeRef: AnyObject?
-        let status: OSStatus = SecItemCopyMatching(query as CFDictionary, &dataTypeRef)
+        let status: OSStatus = security.SecItemCopyMatching(query as CFDictionary, &dataTypeRef)
 
         if status == noErr {
-            return dataTypeRef as! Data?
+            return dataTypeRef as? Data
         } else {
             return nil
         }

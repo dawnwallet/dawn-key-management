@@ -2,6 +2,8 @@ import Foundation
 import Security
 
 public protocol SecurityWrapper {
+    func SecKeyCreateDecryptedData(_ key: SecKey, _ algorithm: SecKeyAlgorithm, _ ciphertext: CFData, _ error: UnsafeMutablePointer<Unmanaged<CFError>?>?) -> CFData?
+    func SecItemAdd(_ attributes: CFDictionary, _ result: UnsafeMutablePointer<CFTypeRef?>?) -> OSStatus
     func SecKeyCopyPublicKey(_ key: SecKey) -> SecKey?
     func SecKeyCreateEncryptedData(_ key: SecKey, _ algorithm: SecKeyAlgorithm, _ plaintext: CFData, _ error: UnsafeMutablePointer<Unmanaged<CFError>?>?) -> CFData?
     func SecItemCopyMatching(_ query: CFDictionary, _ result: UnsafeMutablePointer<CFTypeRef?>?) -> OSStatus
@@ -10,6 +12,14 @@ public protocol SecurityWrapper {
 
 /// Security wrapper used to easily unit test any interaction with the Keychain
 public final class SecurityWrapperImp: SecurityWrapper {
+
+    public func SecKeyCreateDecryptedData(_ key: SecKey, _ algorithm: SecKeyAlgorithm, _ ciphertext: CFData, _ error: UnsafeMutablePointer<Unmanaged<CFError>?>?) -> CFData? {
+        Security.SecKeyCreateDecryptedData(key, algorithm, ciphertext, error)
+    }
+
+    public func SecItemAdd(_ attributes: CFDictionary, _ result: UnsafeMutablePointer<CFTypeRef?>?) -> OSStatus {
+        Security.SecItemAdd(attributes, result)
+    }
 
     public func SecKeyCopyPublicKey(_ key: SecKey) -> SecKey? {
         Security.SecKeyCopyPublicKey(key)

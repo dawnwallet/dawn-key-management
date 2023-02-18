@@ -22,7 +22,7 @@ public final class HDEthereumPrivateKey {
         self.childNumber = childNumber
     }
 
-    public var data: Data {
+    internal var data: Data {
         Data(key.rawBytes)
     }
 }

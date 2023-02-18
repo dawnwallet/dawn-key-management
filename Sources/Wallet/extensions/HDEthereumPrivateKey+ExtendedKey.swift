@@ -44,7 +44,7 @@ extension HDEthereumPrivateKey {
         let parentKey = digest[0..<32]
         let chainCode = digest[32..<64]
 
-        let childKey = try generateChildKey(privateKey: key.rawBytes, derivedPrivateKey: parentKey)
+        let childKey = try tweakChildKey(privateKey: key.rawBytes, derivedPrivateKey: parentKey)
 
         return HDEthereumPrivateKey(
             key: EthereumPrivateKey(rawBytes: childKey),
@@ -53,5 +53,9 @@ extension HDEthereumPrivateKey {
             parentFingerprint: self.parentFingerprint,
             childNumber: childNumber
         )
+    }
+
+    func privateKey() -> EthereumPrivateKey {
+        key
     }
 }

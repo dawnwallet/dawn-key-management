@@ -30,7 +30,7 @@ public final class HDEthereumWallet {
         try self.init(mnemonic: mnemonicString.bytes)
     }
 
-    /// Creates a new HDEthereumWallet with the given id
+    /// Creates a new HDEthereumWallet with the given Id
     /// - Parameter seed: The seed in bytes format
     public convenience init(id: String) throws {
         let mnemonic: ByteArray = try HDEthereumWallet.decryptSeedPhrase(id)
@@ -54,21 +54,9 @@ public final class HDEthereumWallet {
         )
     }
 
-    public func getAddress(at index: UInt32) throws -> EthereumAddress {
-        let privateKey = try generateExternalPrivateKey(at: index)
-        let account = EthereumWallet(privateKey: privateKey)
-        return try account.address
-    }
-
-    public func getPublicKey(at index: UInt32) throws -> EthereumPublicKey {
-        let privateKey = try generateExternalPrivateKey(at: index)
-        let account = EthereumWallet(privateKey: privateKey)
-        return try account.publicKey
-    }
-
     public func generateExternalPrivateKey(at index: UInt32) throws -> EthereumPrivateKey {
-        let nodePrivateKey = try ethereumPrivateKey(index)
-        return EthereumPrivateKey(rawBytes: nodePrivateKey.data.bytes)
+        try ethereumPrivateKey(index)
+            .privateKey()
     }
 
     private func ethereumPrivateKey(_ index: UInt32) throws -> HDEthereumPrivateKey {
@@ -80,17 +68,16 @@ public final class HDEthereumWallet {
 
 extension HDEthereumWallet {
     public func revealSeedPhrase() throws -> ByteArray {
-        return mnemonic
+        mnemonic
     }
 }
 
-// Encryption / Decryption
 extension HDEthereumWallet {
     @discardableResult
     static public func decryptSeedPhrase(
         _ id: String,
-        storage: KeyStorage = KeyStorage(),
-        decrypt: KeyDecrypting = KeyDecryptor()
+        storage: KeyStoring = KeyStorage(),
+        decrypt: KeyDecryptable = KeyDecrypting()
     ) throws -> ByteArray {
         // 1. Get the ciphertext stored in the keychain
         guard let ciphertext = try storage.get(key: id) else {
@@ -105,8 +92,8 @@ extension HDEthereumWallet {
 
     @discardableResult
     public func encryptSeedPhrase(
-        storage: KeyStorage = KeyStorage(),
-        encrypt: KeyEncrypting = KeyEncryptor()
+        storage: KeyStoring = KeyStorage(),
+        encrypt: KeyEncryptable = KeyEncrypting()
     ) throws -> (mnemonic: ByteArray, id: String) {
         let seedPhraseId = UUID().uuidString
         let seedData = Data(mnemonic.bytes)

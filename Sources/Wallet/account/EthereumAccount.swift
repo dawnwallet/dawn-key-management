@@ -1,12 +1,6 @@
 import Foundation
 import Model
-
-import protocol Keychain.KeyDecrypting
-import protocol Keychain.KeyStoring
-
-import class Keychain.KeyEncryptor
-import class Keychain.KeyDecryptor
-import class Keychain.KeyStorage
+import Keychain
 
 public final class EthereumAccount {
 
@@ -18,14 +12,14 @@ public final class EthereumAccount {
     }
 
     private let address: EthereumAddress
-    private let keyDecrypt: KeyDecrypting
+    private let keyDecrypt: KeyDecryptable
     private let keyStorage: KeyStoring
 
-    public init(
-        address: EthereumAddress,
-        keyDecrypt: KeyDecrypting = KeyDecryptor(),
-        keyStorage: KeyStoring = KeyStorage()
-    ) {
+    public convenience init(address: EthereumAddress) {
+        self.init(address: address, keyDecrypt: KeyDecrypting(), keyStorage: KeyStorage())
+    }
+
+    private init(address: EthereumAddress, keyDecrypt: KeyDecryptable, keyStorage: KeyStoring) {
         self.address = address
         self.keyDecrypt = keyDecrypt
         self.keyStorage = keyStorage

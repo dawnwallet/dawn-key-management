@@ -5,17 +5,17 @@ import Keychain
 public class EthereumWallet {
 
     internal let privateKey: EthereumPrivateKey
-    private let encrypt: KeyEncryptor
-    private let storage: KeyStorage
+    private let keyEncrypt: KeyEncryptable
+    private let keyStorage: KeyStoring
 
     public convenience init(privateKey: EthereumPrivateKey) {
-        self.init(privateKey: privateKey, encrypt: KeyEncryptor(), storage: KeyStorage())
+        self.init(privateKey: privateKey, keyEncrypt: KeyEncrypting(), keyStorage: KeyStorage())
     }
 
-    private init(privateKey: EthereumPrivateKey, encrypt: KeyEncryptor, storage: KeyStorage) {
+    private init(privateKey: EthereumPrivateKey, keyEncrypt: KeyEncryptable, keyStorage: KeyStoring) {
         self.privateKey = privateKey
-        self.encrypt = encrypt
-        self.storage = storage
+        self.keyEncrypt = keyEncrypt
+        self.keyStorage = keyStorage
     }
 
     var publicKey: Model.EthereumPublicKey {
@@ -40,10 +40,10 @@ extension EthereumWallet {
         let address = try address.eip55Description
 
         // 1. Encrypt the private key using the address checksum as reference
-        let ciphertext = try encrypt.encrypt(privateKey, with: address)
+        let ciphertext = try keyEncrypt.encrypt(privateKey, with: address)
 
         // 2. Store the ciphertext in the keychain
-        try storage.set(data: ciphertext as Data, key: address)
+        try keyStorage.set(data: ciphertext as Data, key: address)
 
         return self
     }
