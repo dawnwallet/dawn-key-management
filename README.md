@@ -1,6 +1,6 @@
 # KeyManagement
 
-Dawn Key Management provides a new sort of APIs that allows you to manage, create, update wallets and sign transactions in ETH. This package leverages the Secure Enclave to keep your keys protected.
+Dawn Key Management provides a new sort of APIs that allows you to manage, create, encrypt wallets and sign transactions in ETH. This package leverages the Secure Enclave to keep your keys protected.
 
 ## Installation
 
@@ -16,44 +16,69 @@ dependencies: [
 
 ## Usage
 
-### EOA Wallet
-An EOA is represented by an `EthereumWallet` object. You are required to inject an `EthereumPrivateKey`.
+### Wallet
+`EthereumWallet` object is used to describe a standard wallet. 
 
 #### Representation
+Create a new instance by injecting the `EthereumPrivateKey`.
 ```Swift
   let privateKey = EthereumPrivateKey(rawBytes: [])
-  let eoaWallet = EthereumWallet(privateKey: privateKey)
+  let standardWallet = EthereumWallet(privateKey: privateKey)
 ```
 
 #### Encryption
-`EthereumWallet` encrypts the wallet using the following method. It not error is thrown, it returns the wallet back.
+The following method encrypts the wallet using a secret generated in the secure enclave, the resolved ciphertext is stored in the Keychain. It returns the wallet in case no error is thrown.
 ```Swift
-  eoaWallet.encryptWallet()
+  standardWallet.encryptWallet()
 ```
 
 ### Account
-An Account is represented by an `EthereumAccount` object. You are required to inject an `EthereumAddress` to have fully access of its capabilities.
+`EthereumAccount` object is used to perform crypto operations over the encrypted wallet. In order to have fully access of its capabilities, the address injected should have been encrypted before.
 
+#### Representation
+Create a new instance by injecting the `EthereumAddress`.
 ```Swift
   let address = EthereumAddress(hex: "")
   let account = EthereumAccount(address: address)
 ```
 
 #### Signature
-  In case the wallet has been imported, account object has the capability to sign digests.
+  It resolves a signature given the digest. You may only sign digests if the address injected has been encrypted before. If not, an `notImported` error will be thrown.
 ```Swift
   account.signDigest([])
 ```
 #### Decryption
+  It decrypts the privateKey, and returns the byte array representation.
   It reveals the private key by calling this method.
 ```Swift
   account.revealPrivateKey()
 ```
 ### HD Wallet
-#### Encryption
+`HDEthereumWallet` object is used to describe a Hierarchical deterministic Wallet. 
+
+#### Representation
+#### - From mnemonic
+Return the HD Wallet with the given mnemonic string
 ```Swift
-  let hdwallet = HDEthereumWallet() || let hdwallet = HDEthereumWallet(mnemonic: "") || let hdwallet = HDEthereumWallet(seed: [])
-  hdwallet.encryptSeedPhrase()
+  let hdWallet = HDEthereumWallet(mnemonicString: "test test test")
+```
+
+#### - Generate
+Generate a new HD Wallet with the desired lenght
+```Swift
+  let hdWallet = HDEthereumWallet(length: .word12)
+```
+
+#### - Id
+Return the decrypted HD Wallet with the given id returned after encryption
+```Swift
+  let hdWallet = HDEthereumWallet(id: "")
+```
+
+#### Encryption
+Encrypt the mnemonic, and return the id used as reference.
+```Swift
+  let id = hdwallet.encryptSeedPhrase()
 ```
 
 ### License
