@@ -48,7 +48,13 @@ extension EthereumAccount {
         // 2. Decrypt the ciphertext
         let privateKey = try keyDecrypt.decryptPrivateKey(address.eip55Description, cipherText: ciphertext)
 
-        // 3. Return the wallet representation of the private key
+        // 3. Verify the private key is represented by the injected address
+        let wallet = EthereumWallet(privateKey: privateKey)
+        guard try wallet.address.eip55Description == address.eip55Description else {
+            throw Error.wrongAddress
+        }
+
+        // 4. Return the wallet representation of the private key
         return EthereumWallet(privateKey: privateKey)
     }
 }
