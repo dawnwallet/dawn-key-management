@@ -48,8 +48,7 @@ Create a new instance by injecting the `EthereumAddress`.
   account.signDigest([])
 ```
 #### Decryption
-  It decrypts the privateKey, and returns the byte array representation.
-  It reveals the private key by calling this method.
+  It decrypts the privateKey, and returns the bytes representation.
 ```Swift
   account.revealPrivateKey()
 ```
@@ -58,25 +57,25 @@ Create a new instance by injecting the `EthereumAddress`.
 
 #### Representation
 #### - From mnemonic
-Return the HD Wallet with the given mnemonic string
+Return the HD Wallet with the given mnemonic string.
 ```Swift
   let hdWallet = HDEthereumWallet(mnemonicString: "test test test")
 ```
 
 #### - Generate
-Generate a new HD Wallet with the desired lenght
+Generate a new HD Wallet with the desired length.
 ```Swift
   let hdWallet = HDEthereumWallet(length: .word12)
 ```
 
 #### - Id
-Return the decrypted HD Wallet with the given id returned after encryption
+Return the decrypted HD Wallet with the given Id.
 ```Swift
-  let hdWallet = HDEthereumWallet(id: "")
+  let hdWallet = HDEthereumWallet(id: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F")
 ```
 
 #### Encryption
-Encrypt the mnemonic, and return the id used as reference.
+Encrypt the mnemonic, and return the Id used as reference.
 ```Swift
   let id = hdwallet.encryptSeedPhrase()
 ```
