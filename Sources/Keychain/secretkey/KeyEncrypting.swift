@@ -65,19 +65,19 @@ public final class KeyEncrypting: KeyEncryptable {
             kSecReturnRef as String: true,
         ]
 
-        // SecItemCopyMatching will attempt to copy the secret reference identified by the query to the reference secretRef
+        // 1. SecItemCopyMatching will attempt to copy the secret reference identified by the query to the reference secretRef
         var secretRef: CFTypeRef?
         let status = security.SecItemCopyMatching(
             query as CFDictionary,
             &secretRef
         )
 
-        // In case the expected secret does not exist, we throw a referenceNotFound error
+        // 2. In case the expected secret does not exist, we throw a referenceNotFound error
         guard status != errSecItemNotFound else {
             throw Error.referenceNotFound
         }
 
-        // Other than success, we throw an error with the error status
+        // 3. Other than success, we throw an error with the status
         guard status == errSecSuccess else {
             throw Error.unexpectedStatus(status)
         }
@@ -85,7 +85,7 @@ public final class KeyEncrypting: KeyEncryptable {
         return secretRef as! SecKey
     }
 
-    /// Generate secret in the secure enclave, then return its reference
+    /// Generate a secret in the secure enclave, return the reference
     private func generateSecret(with reference: String) throws -> SecKey {
         var error: Unmanaged<CFError>?
         let query = secretQuery(with: reference)
