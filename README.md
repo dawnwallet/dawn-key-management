@@ -81,3 +81,4 @@ Encrypt the mnemonic, and return the Id used as reference.
 ```
 
 ### License
+GPLv3, inspired by the key manager written at Light by Isaac Rodriguez.
