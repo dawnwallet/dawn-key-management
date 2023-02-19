@@ -5,6 +5,7 @@ import Keychain
 public final class EthereumAccount {
 
     enum Error: Swift.Error {
+        case notImported
         case wrongAddress
         case memoryBound
         case createContext
@@ -27,9 +28,9 @@ public final class EthereumAccount {
 }
 
 extension EthereumAccount {
-    public func revealPrivateKey() throws -> ByteArray {
+    public func revealPrivateKey() throws -> EthereumPrivateKey {
         let privateKey = try decryptWallet()
-        return privateKey.privateKey.rawBytes
+        return privateKey.privateKey
     }
 
     public func signDigest(_ digest: ByteArray) throws -> Signature {
@@ -42,7 +43,7 @@ extension EthereumAccount {
     private func decryptWallet() throws -> EthereumWallet {
         // 1. Get the ciphertext stored in the keychain
         guard let ciphertext = try keyStorage.get(key: address.eip55Description) else {
-            throw Error.wrongAddress
+            throw Error.notImported
         }
 
         // 2. Decrypt the ciphertext
