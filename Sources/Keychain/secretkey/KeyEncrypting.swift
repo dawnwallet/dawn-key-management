@@ -100,7 +100,7 @@ public final class KeyEncrypting: KeyEncryptable {
         let access = SecAccessControlCreateWithFlags(
             kCFAllocatorDefault,
             kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
-            [.privateKeyUsage],
+            [.privateKeyUsage, .userPresence],
             nil
         )
         let result: [String: Any] = [
