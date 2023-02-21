@@ -24,7 +24,7 @@ extension HDEthereumPrivateKey {
     }
 
     func deriveChild(_ index: UInt32, hardened: Bool = false) throws -> HDEthereumPrivateKey {
-        let pubKey = try self.publicKey(compressed: true)
+        let pubKey = try publicKey(compressed: true)
 
         var data = Data()
 
@@ -50,7 +50,7 @@ extension HDEthereumPrivateKey {
             key: EthereumPrivateKey(rawBytes: childKey),
             chainCode: chainCode.bytes,
             depth: depth + 1,
-            parentFingerprint: self.parentFingerprint,
+            parentFingerprint: parentFingerprint,
             childNumber: childNumber
         )
     }

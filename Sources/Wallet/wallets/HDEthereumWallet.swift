@@ -36,8 +36,8 @@ public final class HDEthereumWallet {
     /// Creates a new HDEthereumWallet with the given Id
     /// - Parameter seed: The seed in bytes format
     public convenience init(id: String) throws {
-        let mnemonic: CFData = try HDEthereumWallet.decryptSeedPhrase(id)
-        try self.init(mnemonic: (mnemonic as Data).bytes, id: id)
+        let mnemonic: ByteArray = try HDEthereumWallet.decryptSeedPhrase(id)
+        try self.init(mnemonic: mnemonic, id: id)
     }
 
     /// Creates a new HDEthereumWallet with the given seed
@@ -82,14 +82,18 @@ extension HDEthereumWallet {
         _ id: String,
         storage: KeyStoring = KeyStorage(),
         decrypt: KeyDecryptable = KeyDecrypting()
-    ) throws -> CFData {
+    ) throws -> ByteArray {
         // 1. Get the ciphertext stored in the keychain
         guard let ciphertext = try storage.get(key: id) else {
             throw Error.retrieveSeedBytes
         }
 
         // 2. Decrypt the seedPhrase
-        return try decrypt.decrypt(id, cipherText: ciphertext)
+        let decrypted =  try decrypt.decrypt(id, cipherText: ciphertext)
+
+        return decrypted.withDecryptedBytes { key in
+            key
+        }
     }
 
     @discardableResult
