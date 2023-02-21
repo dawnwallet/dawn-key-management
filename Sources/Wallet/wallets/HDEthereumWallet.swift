@@ -74,6 +74,19 @@ extension HDEthereumWallet {
         storage: KeyStoring = KeyStorage(),
         decrypt: KeyDecryptable = KeyDecrypting()
     ) throws -> EthereumPrivateKey {
+
+        return try HDEthereumWallet.accessSeedPhrase(id: id) { key in
+            try HDEthereumWallet(mnemonic: key)
+                .generateExternalPrivateKey(at: index)
+        }
+    }
+
+    public static func accessSeedPhrase<R>(
+        id: String,
+        storage: KeyStoring = KeyStorage(),
+        decrypt: KeyDecryptable = KeyDecrypting(),
+        _ content: (ByteArray) throws -> R
+    ) throws -> R {
         // 1. Get the ciphertext stored in the keychain
         guard let ciphertext = try storage.get(key: id) else {
             throw Error.retrieveSeedBytes
@@ -81,24 +94,7 @@ extension HDEthereumWallet {
 
         // 2. Decrypt key
         return try decrypt.decrypt(id, cipherText: ciphertext, handler: { key in
-            return try HDEthereumWallet(mnemonic: key)
-                .generateExternalPrivateKey(at: index)
-        })
-    }
-
-    public func accessSeedPhrase<R>(
-        storage: KeyStoring = KeyStorage(),
-        decrypt: KeyDecryptable = KeyDecrypting(),
-        _ content: (ByteArray
-        ) -> R) throws -> R {
-        // 1. Get the ciphertext stored in the keychain
-        guard let ciphertext = try storage.get(key: seedPhraseId) else {
-            throw Error.retrieveSeedBytes
-        }
-
-        // 2. Decrypt key
-        return try decrypt.decrypt(seedPhraseId, cipherText: ciphertext, handler: { key in
-            content(key)
+            try content(key)
         })
     }
 }
