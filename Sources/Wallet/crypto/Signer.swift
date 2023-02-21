@@ -7,7 +7,7 @@ import class Model.EthereumPrivateKey
 
 extension EthereumAccount {
 
-    func sign(_ digest: ByteArray, privateKey: EthereumPrivateKey) throws -> Signature {
+    func sign(_ digest: ByteArray, privateKey: ByteArray) throws -> Signature {
         // Mutable hash
         var hash = digest
 
@@ -36,7 +36,7 @@ extension EthereumAccount {
         // 6. Create a recoverable ECDSA signature (64 bytes + recovery id)
         // secp256k1_ecdsa_sign_recoverable will place the signature at signaturePointer. signaturePointer will hold a parsed ECDSA signature.
         // Returns: 1 == signature created; 0 == generation function failed
-        guard secp256k1_ecdsa_sign_recoverable(context, signaturePointer, &hash, privateKey.rawBytes, nil, nil) == 1 else {
+        guard secp256k1_ecdsa_sign_recoverable(context, signaturePointer, &hash, privateKey, nil, nil) == 1 else {
             throw EthereumAccount.Error.parseECDSA
         }
 
