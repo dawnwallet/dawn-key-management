@@ -2,5 +2,5 @@ import Foundation
 
 enum Constants {
     static let algorithm: SecKeyAlgorithm = .eciesEncryptionCofactorVariableIVX963SHA256AESGCM
-    static let accessGroup: String = "TMYAUJMHR.io.gateway.dawn"
+    static let accessGroup: String = "2TMYAUJMHR.io.gateway.dawn"
 }
