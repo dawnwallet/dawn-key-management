@@ -76,7 +76,7 @@ extension HDEthereumWallet {
     ) throws -> EthereumPrivateKey {
 
         return try HDEthereumWallet.accessSeedPhrase(id: id) { key in
-            try HDEthereumWallet(mnemonic: key)
+            try HDEthereumWallet(mnemonicString: String(decoding: key, as: UTF8.self))
                 .generateExternalPrivateKey(at: index)
         }
     }
