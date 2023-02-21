@@ -77,13 +77,13 @@ Encrypt the mnemonic, and return the Id used as reference.
 #### Derivation
 It decrypts the seed phrase, generates an account at the indicated index, and returns the generated private key.
 ```Swift
-  hdwallet.generateExternalPrivateKey(id: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F", index: UInt32(0)) { privateKey in }
+  HDEthereumWallet.generateExternalPrivateKey(id: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F", index: UInt32(0)) { privateKey in }
 ```
 
 #### Decryption
 It decrypts the seed phrase, and returns the closure containing its reference.
 ```Swift
-  let id = hdwallet.accessSeedPhrase(id: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F") { seedPhrase in }
+  HDEthereumWallet.accessSeedPhrase(id: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F") { seedPhrase in }
 ```
 
 ### License
