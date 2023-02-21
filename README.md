@@ -6,7 +6,7 @@ Dawn Key Management provides a new sort of APIs that allows you to manage, creat
 
 ### Swift Package Manager
 
-To integrate this package into your Xcode project using Swift Package Manager, add it to the dependencies valye of your Package.swift: 
+To integrate this package into your Xcode project using Swift Package Manager, add it to the dependencies value of your Package.swift: 
 
 ```Swift
 dependencies: [
