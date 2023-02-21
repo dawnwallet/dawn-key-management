@@ -1,6 +1,6 @@
 # KeyManagement
 
-Dawn Key Management provides a new sort of APIs that allows you to manage, create, encrypt wallets and sign transactions in ETH. This package leverages the Secure Enclave to keep your keys protected.
+The Dawn Wallet Key Management repo provides a new API that allows you to manage, create, encrypt wallets and sign transactions on Ethereum. This package leverages the Secure Enclave to keep your keys protected, by using a secret in the Secure Enclave to encrypt a user private key.
 
 ## Installation
 
@@ -33,7 +33,7 @@ The following method encrypts the wallet using a secret generated in the secure 
 ```
 
 ### Account
-`EthereumAccount` object is used to perform crypto operations over the encrypted wallet. In order to have fully access of its capabilities, the address injected should have been encrypted before.
+The `EthereumAccount` object is used to perform crypto operations over the encrypted wallet. In order to have full access to its capabilities, the injected address should have been previously encrypted.
 
 #### Representation
 Create a new instance by injecting the `EthereumAddress`.
@@ -43,7 +43,7 @@ Create a new instance by injecting the `EthereumAddress`.
 ```
 
 #### Signature
-  It resolves a signature given the digest. You may only sign digests if the address injected has been encrypted before. If not, an `notImported` error will be thrown.
+  It resolves a signature given the digest. You may only sign digests if the address injected has been encrypted before. If not, a `notImported` error will be thrown.
 ```Swift
   account.signDigest([])
 ```
@@ -87,4 +87,4 @@ It decrypts the seed phrase, and returns the closure containing its reference.
 ```
 
 ### License
-GPLv3, inspired by the key manager written at Light by Isaac Rodriguez.
+GPL-3.0 license. Inspired by the key manager written at Light Wallet by Isaac Rodriguez.
