@@ -20,30 +20,25 @@ public final class HDEthereumWallet {
 
     /// Creates a new HDEthereumWallet generating a new seed phrase
     /// - Parameter seed: The seed in bytes format
-    public convenience init(lenght: Length = .word12) throws {
+    public convenience init(length: Length = .word12) throws {
         let mnemonic: String = try Mnemonic.generateMnemonic(
-            strength: lenght.strength
+            strength: length.strength
         )
-        try self.init(mnemonic: mnemonic.bytes, id: UUID().uuidString)
+        try self.init(mnemonic: mnemonic.bytes)
     }
 
     /// Creates a new HDEthereumWallet with the given mnemonic string
     /// - Parameter seed: The seed in bytes format
     public convenience init(mnemonicString: String) throws {
-        try self.init(mnemonic: mnemonicString.bytes, id: UUID().uuidString)
-    }
-
-    /// Creates a new HDEthereumWallet with the given Id
-    /// - Parameter seed: The seed in bytes format
-    public convenience init(id: String) throws {
-        let mnemonic: ByteArray = try HDEthereumWallet.decryptSeedPhrase(id)
-        try self.init(mnemonic: mnemonic, id: id)
+        try self.init(mnemonic: mnemonicString.bytes)
     }
 
     /// Creates a new HDEthereumWallet with the given seed
     /// - Parameter seed: The seed in bytes format
-    private init(mnemonic: ByteArray, id: String) throws {
+    private init(mnemonic: ByteArray) throws {
+        let id = UUID().uuidString
         let mnemonicString = String(decoding: mnemonic, as: UTF8.self)
+
         let deterministicSeed: ByteArray = try Mnemonic.deterministicSeedBytes(from: mnemonicString)
         let hmac = HMAC(key: Constants.bitcoinSeed, variant: .sha2(.sha512))
         let computedHMAC = try hmac.authenticate(deterministicSeed)
@@ -70,38 +65,52 @@ public final class HDEthereumWallet {
     }
 }
 
+// Encrypted methods
 extension HDEthereumWallet {
-    public func revealSeedPhrase() throws -> ByteArray {
-        mnemonic
-    }
-}
 
-extension HDEthereumWallet {
-    @discardableResult
-    static public func decryptSeedPhrase(
-        _ id: String,
+    public static func generateExternalPrivateKey(
+        with id: String,
+        at index: UInt32,
         storage: KeyStoring = KeyStorage(),
         decrypt: KeyDecryptable = KeyDecrypting()
-    ) throws -> ByteArray {
+    ) throws -> EthereumPrivateKey {
         // 1. Get the ciphertext stored in the keychain
         guard let ciphertext = try storage.get(key: id) else {
             throw Error.retrieveSeedBytes
         }
 
-        // 2. Decrypt the seedPhrase
-        let decrypted =  try decrypt.decrypt(id, cipherText: ciphertext)
-
-        return decrypted.withDecryptedBytes { key in
-            key
-        }
+        // 2. Decrypt key
+        return try decrypt.decrypt(id, cipherText: ciphertext, handler: { key in
+            return try HDEthereumWallet(mnemonic: key)
+                .generateExternalPrivateKey(at: index)
+        })
     }
+
+    public func accessSeedPhrase<R>(
+        storage: KeyStoring = KeyStorage(),
+        decrypt: KeyDecryptable = KeyDecrypting(),
+        _ content: (ByteArray
+        ) -> R) throws -> R {
+        // 1. Get the ciphertext stored in the keychain
+        guard let ciphertext = try storage.get(key: seedPhraseId) else {
+            throw Error.retrieveSeedBytes
+        }
+
+        // 2. Decrypt key
+        return try decrypt.decrypt(seedPhraseId, cipherText: ciphertext, handler: { key in
+            content(key)
+        })
+    }
+}
+
+extension HDEthereumWallet {
 
     @discardableResult
     public func encryptSeedPhrase(
         storage: KeyStoring = KeyStorage(),
         encrypt: KeyEncryptable = KeyEncrypting()
     ) throws -> (mnemonic: ByteArray, id: String) {
-        let seedData = Data(mnemonic.bytes)
+        let seedData = Data([])
 
         // 1. Encrypt the seedPhrase using the generated UUID as reference
         let ciphertext = try encrypt.encrypt(seedData, with: seedPhraseId)
@@ -109,6 +118,6 @@ extension HDEthereumWallet {
         // 2. Store the ciphertext in the keychain
         try storage.set(data: ciphertext as Data, key: seedPhraseId)
 
-        return (mnemonic: mnemonic.bytes, id: seedPhraseId)
+        return (mnemonic: [], id: seedPhraseId)
     }
 }

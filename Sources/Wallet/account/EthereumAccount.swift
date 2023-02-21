@@ -35,13 +35,9 @@ extension EthereumAccount {
             throw Error.notImported
         }
 
-        let decryptedKey = try keyDecrypt.decrypt(address.eip55Description, cipherText: ciphertext)
-
-        let privateKey = decryptedKey.withDecryptedBytes { key in
+        return try keyDecrypt.decrypt(address.eip55Description, cipherText: ciphertext, handler: { key in
             content(key)
-        }
-
-        return privateKey
+        })
     }
 
     public func signDigest(_ digest: ByteArray) throws -> Signature {
@@ -50,13 +46,9 @@ extension EthereumAccount {
             throw Error.notImported
         }
 
-        // 2.
-        let decryptedKey = try keyDecrypt.decrypt(address.eip55Description, cipherText: ciphertext)
-
-        // 2. Decrypt the ciphertext
-        let signature: Signature = try decryptedKey.withDecryptedBytes { key in
-            return try sign(digest, privateKey: key)
-        }
-        return signature
+        // 2. Decrypt ciphertext, return the signature
+        return try keyDecrypt.decrypt(address.eip55Description, cipherText: ciphertext, handler: { key in
+            try sign(digest, privateKey: key)
+        })
     }
 }

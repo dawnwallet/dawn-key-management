@@ -3,7 +3,7 @@ import Model
 import class Model.EthereumPrivateKey
 
 public protocol KeyDecryptable {
-    func decrypt(_ id: String, cipherText: Data) throws -> ByteArray
+    func decrypt<R>(_ id: String, cipherText: Data, handler: ((ByteArray) throws -> R)) throws -> R
 }
 
 public final class KeyDecrypting: KeyDecryptable {
@@ -22,7 +22,7 @@ public final class KeyDecrypting: KeyDecryptable {
         self.security = security
     }
 
-    public func decrypt(_ id: String, cipherText: Data) throws -> ByteArray {
+    public func decrypt<R>(_ id: String, cipherText: Data, handler: ((ByteArray) throws -> R)) throws -> R {
         // 1. Get the reference of the secret stored in the secure enclave
         let secret = try secretReference(with: id, cipherText: cipherText)
 
@@ -36,7 +36,9 @@ public final class KeyDecrypting: KeyDecryptable {
         }
 
         // 3. Return the Private Key using the array of bytes
-        return plainTextData.bytes
+        return try plainTextData.bytes.withDecryptedBytes { key in
+            try handler(key)
+        }
     }
 
     private func secretReference(with reference: String, cipherText: Data) throws -> CFTypeRef? {
