@@ -30,11 +30,12 @@ public final class KeyDecrypting: KeyDecryptable {
         var error: Unmanaged<CFError>?
         let plainTextData = security.SecKeyCreateDecryptedData(secret as! SecKey, Constants.algorithm, cipherText as CFData, &error) as? Data
 
+        // 3. Get the value of the unmanaged error reference
         guard let plainTextData = plainTextData else {
             throw error!.takeRetainedValue() as Swift.Error
         }
 
-        // 3. Return the Private Key using the array of bytes
+        // 4. Return the Private Key using the array of bytes
         return try plainTextData.bytes.withDecryptedBytes { key in
             try handler(key)
         }
@@ -50,7 +51,7 @@ public final class KeyDecrypting: KeyDecryptable {
         ]
         var raw: CFTypeRef?
         let status = security.SecItemCopyMatching(params as CFDictionary, &raw)
-        guard status == errSecSuccess else { throw Error.copyingSecret  }
+        guard status == errSecSuccess else { throw Error.copyingSecret }
         return raw
     }
 }

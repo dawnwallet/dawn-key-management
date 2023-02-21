@@ -84,6 +84,7 @@ public final class HDEthereumWallet {
             throw Error.retrieveSeedBytes
         }
 
+        // 2. Decrypt the seedPhrase, return the closure containing it
         return try decrypt.decrypt(id, cipherText: ciphertext, handler: { key in
             try content(key)
         })

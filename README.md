@@ -8,7 +8,7 @@ Dawn Key Management provides a new sort of APIs that allows you to manage, creat
 
 To integrate this package into your Xcode project using Swift Package Manager, add it to the dependencies valye of your Package.swift: 
 
-```
+```Swift
 dependencies: [
     .package(url: "https://github.com/dawnwallet/dawn-key-management", branch: "main")
 ]
@@ -38,7 +38,7 @@ The following method encrypts the wallet using a secret generated in the secure 
 #### Representation
 Create a new instance by injecting the `EthereumAddress`.
 ```Swift
-  let address = EthereumAddress(hex: "")
+  let address = EthereumAddress(hex: "0x7851b240aCE79FA6961AE36c865802D1416611e7")
   let account = EthereumAccount(address: address)
 ```
 
@@ -48,9 +48,9 @@ Create a new instance by injecting the `EthereumAddress`.
   account.signDigest([])
 ```
 #### Decryption
-  It decrypts the privateKey, and returns the bytes representation.
+  It decrypts the privateKey, and returns the closure containing its reference.
 ```Swift
-  account.revealPrivateKey()
+  account.accessPrivateKey { privateKey in }
 ```
 ### HD Wallet
 `HDEthereumWallet` object is used to describe a Hierarchical deterministic Wallet. 
@@ -68,16 +68,16 @@ Generate a new HD Wallet with the desired length.
   let hdWallet = HDEthereumWallet(length: .word12)
 ```
 
-#### - Id
-Return the decrypted HD Wallet with the given Id.
-```Swift
-  let hdWallet = HDEthereumWallet(id: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F")
-```
-
 #### Encryption
 Encrypt the mnemonic, and return the Id used as reference.
 ```Swift
   let id = hdwallet.encryptSeedPhrase()
+```
+
+#### Decryption
+  It decrypts the seed phrase, and returns the closure containing its reference.
+```Swift
+  let id = hdwallet.accessSeedPhrase(id: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F") { seedPhrase in }
 ```
 
 ### License
