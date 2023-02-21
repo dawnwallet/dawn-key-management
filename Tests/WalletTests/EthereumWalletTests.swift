@@ -6,7 +6,4 @@ import Model
 
 class EthereumWalletTests: XCTestCase {
 
-    func test_address_accounts() throws {
-
-    }
 }
