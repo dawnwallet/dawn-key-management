@@ -106,7 +106,7 @@ extension HDEthereumWallet {
         storage: KeyStoring = KeyStorage(),
         encrypt: KeyEncryptable = KeyEncrypting()
     ) throws -> (mnemonic: ByteArray, id: String) {
-        let seedData = Data([])
+        let seedData = Data(mnemonic.bytes)
 
         // 1. Encrypt the seedPhrase using the generated UUID as reference
         let ciphertext = try encrypt.encrypt(seedData, with: seedPhraseId)
@@ -114,6 +114,6 @@ extension HDEthereumWallet {
         // 2. Store the ciphertext in the keychain
         try storage.set(data: ciphertext as Data, key: seedPhraseId)
 
-        return (mnemonic: [], id: seedPhraseId)
+        return (mnemonic: mnemonic.bytes, id: seedPhraseId)
     }
 }
