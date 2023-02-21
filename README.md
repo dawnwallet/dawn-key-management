@@ -56,13 +56,13 @@ Create a new instance by injecting the `EthereumAddress`.
 `HDEthereumWallet` object is used to describe a Hierarchical deterministic Wallet. 
 
 #### Representation
-#### - From mnemonic
+#### From mnemonic
 Return the HD Wallet with the given mnemonic string.
 ```Swift
   let hdWallet = HDEthereumWallet(mnemonicString: "test test test")
 ```
 
-#### - Generate
+#### Generate
 Generate a new HD Wallet with the desired length.
 ```Swift
   let hdWallet = HDEthereumWallet(length: .word12)
@@ -74,8 +74,14 @@ Encrypt the mnemonic, and return the Id used as reference.
   let id = hdwallet.encryptSeedPhrase()
 ```
 
+#### Derivation
+It decrypts the seed phrase, generates an account at the indicated index, and returns the generated private key.
+```Swift
+  hdwallet.generateExternalPrivateKey(id: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F", index: UInt32(0)) { privateKey in }
+```
+
 #### Decryption
-  It decrypts the seed phrase, and returns the closure containing its reference.
+It decrypts the seed phrase, and returns the closure containing its reference.
 ```Swift
   let id = hdwallet.accessSeedPhrase(id: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F") { seedPhrase in }
 ```
