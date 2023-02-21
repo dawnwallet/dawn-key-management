@@ -35,6 +35,7 @@ extension EthereumAccount {
             throw Error.notImported
         }
 
+        // 2. Decrypt ciphertext, return the key
         return try keyDecrypt.decrypt(address.eip55Description, cipherText: ciphertext, handler: { key in
             content(key)
         })

@@ -7,7 +7,6 @@ import Keychain
 public final class HDEthereumWallet {
 
     private let privateKey: HDEthereumPrivateKey
-    private let seedPhraseId: String
     private let mnemonic: ByteArray
 
     public enum Error: Swift.Error {
@@ -33,17 +32,12 @@ public final class HDEthereumWallet {
         try self.init(mnemonic: mnemonicString.bytes)
     }
 
-    /// Creates a new HDEthereumWallet with the given seed
-    /// - Parameter seed: The seed in bytes format
     private init(mnemonic: ByteArray) throws {
-        let id = UUID().uuidString
         let mnemonicString = String(decoding: mnemonic, as: UTF8.self)
-
         let deterministicSeed: ByteArray = try Mnemonic.deterministicSeedBytes(from: mnemonicString)
         let hmac = HMAC(key: Constants.bitcoinSeed, variant: .sha2(.sha512))
         let computedHMAC = try hmac.authenticate(deterministicSeed)
         self.mnemonic = mnemonic
-        self.seedPhraseId = id
         self.privateKey = HDEthereumPrivateKey(
             key: EthereumPrivateKey(rawBytes: ByteArray(computedHMAC[0..<32])),
             chainCode: ByteArray(computedHMAC[32..<64]),
@@ -65,22 +59,20 @@ public final class HDEthereumWallet {
     }
 }
 
-// Encrypted methods
-extension HDEthereumWallet {
+ extension HDEthereumWallet {
 
+    /// Generate an external private key given the id generated during encryption
     public static func generateExternalPrivateKey(
-        with id: String,
-        at index: UInt32,
-        storage: KeyStoring = KeyStorage(),
-        decrypt: KeyDecryptable = KeyDecrypting()
+        with seedId: String,
+        at index: UInt32
     ) throws -> EthereumPrivateKey {
-
-        return try HDEthereumWallet.accessSeedPhrase(id: id) { key in
+        try HDEthereumWallet.accessSeedPhrase(id: seedId) { key in
             try HDEthereumWallet(mnemonicString: String(decoding: key, as: UTF8.self))
                 .generateExternalPrivateKey(at: index)
         }
     }
 
+    /// Returns the closue containing the seed
     public static func accessSeedPhrase<R>(
         id: String,
         storage: KeyStoring = KeyStorage(),
@@ -92,7 +84,6 @@ extension HDEthereumWallet {
             throw Error.retrieveSeedBytes
         }
 
-        // 2. Decrypt key
         return try decrypt.decrypt(id, cipherText: ciphertext, handler: { key in
             try content(key)
         })
@@ -105,15 +96,16 @@ extension HDEthereumWallet {
     public func encryptSeedPhrase(
         storage: KeyStoring = KeyStorage(),
         encrypt: KeyEncryptable = KeyEncrypting()
-    ) throws -> (mnemonic: ByteArray, id: String) {
+    ) throws -> String {
+        let seedId = UUID().uuidString
         let seedData = Data(mnemonic.bytes)
 
         // 1. Encrypt the seedPhrase using the generated UUID as reference
-        let ciphertext = try encrypt.encrypt(seedData, with: seedPhraseId)
+        let ciphertext = try encrypt.encrypt(seedData, with: seedId)
 
         // 2. Store the ciphertext in the keychain
-        try storage.set(data: ciphertext as Data, key: seedPhraseId)
+        try storage.set(data: ciphertext as Data, key: seedId)
 
-        return (mnemonic: mnemonic.bytes, id: seedPhraseId)
+        return seedId
     }
 }

@@ -31,8 +31,7 @@ public final class KeyDecrypting: KeyDecryptable {
         let plainTextData = security.SecKeyCreateDecryptedData(secret as! SecKey, Constants.algorithm, cipherText as CFData, &error) as? Data
 
         guard let plainTextData = plainTextData else {
-            let _ = error!.takeRetainedValue() as Swift.Error
-            throw Error.copyingSecret
+            throw error!.takeRetainedValue() as Swift.Error
         }
 
         // 3. Return the Private Key using the array of bytes
