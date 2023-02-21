@@ -7,6 +7,7 @@ import Keychain
 public final class HDEthereumWallet {
 
     private let privateKey: HDEthereumPrivateKey
+    private let seedPhraseId: String
     private let mnemonic: ByteArray
 
     public enum Error: Swift.Error {
@@ -20,31 +21,34 @@ public final class HDEthereumWallet {
     /// Creates a new HDEthereumWallet generating a new seed phrase
     /// - Parameter seed: The seed in bytes format
     public convenience init(lenght: Length = .word12) throws {
-        let mnemonic: String = try Mnemonic.generateMnemonic(strength: lenght.strength)
-        try self.init(mnemonic: mnemonic.bytes)
+        let mnemonic: String = try Mnemonic.generateMnemonic(
+            strength: lenght.strength
+        )
+        try self.init(mnemonic: mnemonic.bytes, id: UUID().uuidString)
     }
 
     /// Creates a new HDEthereumWallet with the given mnemonic string
     /// - Parameter seed: The seed in bytes format
     public convenience init(mnemonicString: String) throws {
-        try self.init(mnemonic: mnemonicString.bytes)
+        try self.init(mnemonic: mnemonicString.bytes, id: UUID().uuidString)
     }
 
     /// Creates a new HDEthereumWallet with the given Id
     /// - Parameter seed: The seed in bytes format
     public convenience init(id: String) throws {
-        let mnemonic: ByteArray = try HDEthereumWallet.decryptSeedPhrase(id)
-        try self.init(mnemonic: mnemonic)
+        let mnemonic: CFData = try HDEthereumWallet.decryptSeedPhrase(id)
+        try self.init(mnemonic: (mnemonic as Data).bytes, id: id)
     }
 
     /// Creates a new HDEthereumWallet with the given seed
     /// - Parameter seed: The seed in bytes format
-    private init(mnemonic: ByteArray) throws {
+    private init(mnemonic: ByteArray, id: String) throws {
         let mnemonicString = String(decoding: mnemonic, as: UTF8.self)
         let deterministicSeed: ByteArray = try Mnemonic.deterministicSeedBytes(from: mnemonicString)
         let hmac = HMAC(key: Constants.bitcoinSeed, variant: .sha2(.sha512))
         let computedHMAC = try hmac.authenticate(deterministicSeed)
         self.mnemonic = mnemonic
+        self.seedPhraseId = id
         self.privateKey = HDEthereumPrivateKey(
             key: EthereumPrivateKey(rawBytes: ByteArray(computedHMAC[0..<32])),
             chainCode: ByteArray(computedHMAC[32..<64]),
@@ -78,16 +82,14 @@ extension HDEthereumWallet {
         _ id: String,
         storage: KeyStoring = KeyStorage(),
         decrypt: KeyDecryptable = KeyDecrypting()
-    ) throws -> ByteArray {
+    ) throws -> CFData {
         // 1. Get the ciphertext stored in the keychain
         guard let ciphertext = try storage.get(key: id) else {
             throw Error.retrieveSeedBytes
         }
 
         // 2. Decrypt the seedPhrase
-        let seed = try decrypt.decryptSeed(id, cipherText: ciphertext)
-
-        return seed
+        return try decrypt.decrypt(id, cipherText: ciphertext)
     }
 
     @discardableResult
@@ -95,7 +97,6 @@ extension HDEthereumWallet {
         storage: KeyStoring = KeyStorage(),
         encrypt: KeyEncryptable = KeyEncrypting()
     ) throws -> (mnemonic: ByteArray, id: String) {
-        let seedPhraseId = UUID().uuidString
         let seedData = Data(mnemonic.bytes)
 
         // 1. Encrypt the seedPhrase using the generated UUID as reference
