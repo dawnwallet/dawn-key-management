@@ -86,5 +86,8 @@ It decrypts the seed phrase, and returns the closure containing its reference.
   HDEthereumWallet.accessSeedPhrase(id: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F") { seedPhrase in }
 ```
 
-### License
-GPL-3.0 license. Inspired by the key manager written at Light Wallet by Isaac Rodriguez.
+## Acknowledgements
+Inspired by the key manager written at Light Wallet by Isaac Rodriguez.
+
+## License
+GPL-3.0 license
