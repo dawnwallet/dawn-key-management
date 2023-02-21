@@ -87,7 +87,7 @@ It decrypts the seed phrase, and returns the closure containing its reference.
 ```
 
 ## Acknowledgements
-In part based on the key manager written at Light Wallet (https://github.com/LightDotSo/Wallet) by Isaac Rodriguez.
+In part based on the key manager written at Light Wallet (https://github.com/LightDotSo/Wallet).
 
 ## License
 GPL-3.0 license
