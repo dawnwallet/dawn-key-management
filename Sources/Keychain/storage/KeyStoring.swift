@@ -3,6 +3,7 @@ import Foundation
 public protocol KeyStoring {
     func set(data: Data, key: String) throws -> OSStatus
     func get(key: String) throws -> Data?
+    func delete(key: String) throws -> OSStatus
 }
 
 public final class KeyStorage: KeyStoring {
@@ -44,5 +45,14 @@ public final class KeyStorage: KeyStoring {
         } else {
             return nil
         }
+    }
+
+    public func delete(key: String) throws -> OSStatus {
+        let query = [
+            kSecClass as String: kSecClassGenericPassword as String,
+            kSecAttrAccount as String: key
+        ] as [String: Any]
+
+        return security.SecItemDelete(query as CFDictionary)
     }
 }
