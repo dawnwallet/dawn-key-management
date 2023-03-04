@@ -103,10 +103,9 @@ public final class KeyEncrypting: KeyEncryptable {
             [.privateKeyUsage, .userPresence],
             nil
         )
-        let result: [String: Any] = [
+        var result: [String: Any] = [
             kSecAttrKeyType as String: kSecAttrKeyTypeEC,
             kSecAttrKeySizeInBits as String: 256,
-            kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave,
             kSecAttrAccessGroup as String: Constants.accessGroup,
             kSecPrivateKeyAttrs as String: [
                 kSecAttrIsPermanent as String: true,
@@ -114,6 +113,11 @@ public final class KeyEncrypting: KeyEncryptable {
                 kSecAttrAccessControl as String: access as Any,
             ],
         ]
+
+        if Platform.isRealDevice {
+            result[kSecAttrTokenID as String] = kSecAttrTokenIDSecureEnclave
+        }
+
         return result
     }
 }
