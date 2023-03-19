@@ -47,6 +47,7 @@ public final class KeyStorage: KeyStoring {
         }
     }
 
+    @discardableResult
     public func delete(key: String) throws -> OSStatus {
         let query = [
             kSecClass as String: kSecClassGenericPassword as String,
