@@ -1,6 +1,6 @@
 # Dawn Key Management
 
-The Dawn Wallet Key Management repo provides a new API that allows you to manage, create, encrypt wallets and sign transactions on Ethereum. This package leverages the Secure Enclave to keep your keys protected, by using a secret in the Secure Enclave to encrypt a user private key.
+The Dawn Wallet Key Management repo provides a new SDK that allows you to manage, create, encrypt wallets and sign transactions on Ethereum. This package leverages the Secure Enclave to keep your keys protected, by using a secret in the Secure Enclave to encrypt a user private key.
 
 ## Installation
 
