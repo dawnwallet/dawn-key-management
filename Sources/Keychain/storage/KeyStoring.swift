@@ -20,12 +20,16 @@ public final class KeyStorage: KeyStoring {
 
     @discardableResult
     public func set(data: Data, key: String) throws -> OSStatus {
+        // 1. Delete any existing key before saving it
+        try delete(key: key)
+
         let query = [
             kSecClass as String: kSecClassGenericPassword as String,
             kSecAttrAccount as String: key,
             kSecValueData as String: data
         ] as [String : Any]
 
+        // 2. Save item into the keychain
         return security.SecItemAdd(query as CFDictionary, nil)
     }
 
