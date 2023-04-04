@@ -23,6 +23,7 @@ public final class KeyEncrypting: KeyEncryptable {
         case publicKey
         case failedEncryption
         case resolvingPublicKey
+        case duplicatedKey
     }
 
     /// Encrypt the private key using a secret generated in the secure enclave
@@ -87,6 +88,8 @@ public final class KeyEncrypting: KeyEncryptable {
 
     /// Generate a secret in the secure enclave, return the reference
     private func generateSecret(with reference: String) throws -> SecKey {
+        guard getSecretCount(with: reference) == 0 else { throw Error.duplicatedKey }
+
         var error: Unmanaged<CFError>?
         let query = secretQuery(with: reference)
         guard let secKey = security.SecKeyCreateRandomKey(query as CFDictionary, &error) else {
@@ -119,5 +122,31 @@ public final class KeyEncrypting: KeyEncryptable {
         }
 
         return result
+    }
+
+    /// Fetch number of secrets using address as reference
+    private func getSecretCount(with reference: String) -> Int {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassKey,
+            kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
+            kSecAttrApplicationTag as String: reference.data(using: .utf8) as Any,
+            kSecReturnRef as String: true,
+            kSecMatchLimit as String: kSecMatchLimitAll
+        ]
+
+        // 1. SecItemCopyMatching will query how many secrets are currently stored in the secure enclave
+        var secretRef: CFTypeRef?
+        let status = security.SecItemCopyMatching(
+            query as CFDictionary,
+            &secretRef
+        )
+
+        // 2. Return how many secrets were retrieved from the secure enclave
+        if status == noErr, let secrets = secretRef as? [SecKey] {
+            return secrets.count
+        }
+
+        // 3. Return 0 otherwise
+        return 0
     }
 }
