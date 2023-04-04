@@ -1,9 +1,9 @@
 import Foundation
 
 public protocol KeyStoring {
-    func set(data: Data, key: String) throws -> OSStatus
+    func set(data: Data, key: String) -> OSStatus
     func get(key: String) throws -> Data?
-    func delete(key: String) throws -> OSStatus
+    func delete(key: String) -> OSStatus
 }
 
 public final class KeyStorage: KeyStoring {
@@ -19,9 +19,9 @@ public final class KeyStorage: KeyStoring {
     }
 
     @discardableResult
-    public func set(data: Data, key: String) throws -> OSStatus {
+    public func set(data: Data, key: String) -> OSStatus {
         // 1. Delete any existing key before saving it
-        try delete(key: key)
+        delete(key: key)
 
         let query = [
             kSecClass as String: kSecClassGenericPassword as String,
@@ -52,7 +52,7 @@ public final class KeyStorage: KeyStoring {
     }
 
     @discardableResult
-    public func delete(key: String) throws -> OSStatus {
+    public func delete(key: String) -> OSStatus {
         let query = [
             kSecClass as String: kSecClassGenericPassword as String,
             kSecAttrAccount as String: key
