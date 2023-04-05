@@ -104,7 +104,7 @@ public final class KeyEncrypting: KeyEncryptable {
             nil
         )
         var result: [String: Any] = [
-            kSecAttrKeyType as String: kSecAttrKeyTypeEC,
+            kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
             kSecAttrKeySizeInBits as String: 256,
             kSecAttrAccessGroup as String: Constants.accessGroup,
             kSecPrivateKeyAttrs as String: [
