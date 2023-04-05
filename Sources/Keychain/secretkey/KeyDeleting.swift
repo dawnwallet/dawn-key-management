@@ -10,7 +10,7 @@ public final class KeyDeleting: KeyDeletable {
     private let keyStore: KeyStorage
 
     enum Error: Swift.Error {
-        case deleteCiphertext
+        case deleteCiphertext(OSStatus)
     }
 
     public convenience init() {
@@ -30,8 +30,10 @@ public final class KeyDeleting: KeyDeletable {
         ]
 
         // 1. Delete the ciphertext stored at reference
-        guard keyStore.delete(key: reference) == errSecSuccess else {
-            throw Error.deleteCiphertext
+        let status = keyStore.delete(key: reference)
+
+        guard status == errSecSuccess else {
+            throw Error.deleteCiphertext(status)
         }
 
         // 2. Delete the secret used to encrypt the private key

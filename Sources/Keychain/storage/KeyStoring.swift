@@ -10,6 +10,10 @@ public final class KeyStorage: KeyStoring {
 
     private let security: SecurityWrapper
 
+    enum Error: Swift.Error {
+        case deleteStorage
+    }
+
     public convenience init() {
         self.init(security: SecurityWrapperImp())
     }
@@ -21,7 +25,10 @@ public final class KeyStorage: KeyStoring {
     @discardableResult
     public func set(data: Data, key: String) -> OSStatus {
         // 1. Delete any existing key before saving it
-        delete(key: key)
+        let status = delete(key: key)
+        guard status == errSecSuccess else {
+            return status
+        }
 
         let query = [
             kSecClass as String: kSecClassGenericPassword as String,
