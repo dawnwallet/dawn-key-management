@@ -8,6 +8,10 @@ public class EthereumWallet {
     private let keyEncrypt: KeyEncryptable
     private let keyStorage: KeyStoring
 
+    enum Error: Swift.Error {
+        case keychainStore(OSStatus)
+    }
+
     public convenience init(privateKey: EthereumPrivateKey) {
         self.init(privateKey: privateKey, keyEncrypt: KeyEncrypting(), keyStorage: KeyStorage())
     }
@@ -43,7 +47,11 @@ extension EthereumWallet {
         let ciphertext = try keyEncrypt.encrypt(privateKey, with: address)
 
         // 2. Store the ciphertext in the keychain
-        try keyStorage.set(data: ciphertext as Data, key: address)
+        let status = keyStorage.set(data: ciphertext as Data, key: address)
+
+        guard status == errSecSuccess else {
+            throw Error.keychainStore(status)
+        }
 
         return self
     }

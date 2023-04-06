@@ -9,6 +9,10 @@ public final class KeyDeleting: KeyDeletable {
     private let security: SecurityWrapper
     private let keyStore: KeyStorage
 
+    enum Error: Swift.Error {
+        case deleteCiphertext(OSStatus)
+    }
+
     public convenience init() {
         self.init(security: SecurityWrapperImp(), keyStore: KeyStorage())
     }
@@ -18,17 +22,21 @@ public final class KeyDeleting: KeyDeletable {
         self.keyStore = keyStore
     }
 
-    @discardableResult
     public func delete(with reference: String) throws -> OSStatus {
         let params: [String: Any] = [
             kSecClass as String: kSecClassKey,
             kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
             kSecAttrApplicationTag as String: reference.data(using: .utf8) as Any,
         ]
-        // 1. Delete the ciphertext stored at reference
-        try keyStore.delete(key: reference)
 
-        // 2. Delete the secret used to encrypt the ciphertext
+        // 1. Delete the ciphertext stored at reference
+        let status = keyStore.delete(key: reference)
+
+        guard status == errSecSuccess else {
+            throw Error.deleteCiphertext(status)
+        }
+
+        // 2. Delete the secret used to encrypt the private key
         return security.SecItemDelete(params as CFDictionary)
     }
 }

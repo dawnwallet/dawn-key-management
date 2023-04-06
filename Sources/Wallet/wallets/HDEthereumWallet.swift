@@ -11,6 +11,7 @@ public final class HDEthereumWallet {
 
     public enum Error: Swift.Error {
         case retrieveSeedBytes
+        case hdKeychainStore(OSStatus)
     }
 
     enum Constants {
@@ -105,7 +106,11 @@ extension HDEthereumWallet {
         let ciphertext = try encrypt.encrypt(seedData, with: seedId)
 
         // 2. Store the ciphertext in the keychain
-        try storage.set(data: ciphertext as Data, key: seedId)
+        let status = storage.set(data: ciphertext as Data, key: seedId)
+
+        guard status == errSecSuccess else {
+            throw Error.hdKeychainStore(status)
+        }
 
         return seedId
     }

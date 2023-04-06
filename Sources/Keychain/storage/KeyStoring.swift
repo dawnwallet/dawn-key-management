@@ -1,14 +1,18 @@
 import Foundation
 
 public protocol KeyStoring {
-    func set(data: Data, key: String) throws -> OSStatus
+    func set(data: Data, key: String) -> OSStatus
     func get(key: String) throws -> Data?
-    func delete(key: String) throws -> OSStatus
+    func delete(key: String) -> OSStatus
 }
 
 public final class KeyStorage: KeyStoring {
 
     private let security: SecurityWrapper
+
+    enum Error: Swift.Error {
+        case deleteStorage
+    }
 
     public convenience init() {
         self.init(security: SecurityWrapperImp())
@@ -19,9 +23,15 @@ public final class KeyStorage: KeyStoring {
     }
 
     @discardableResult
-    public func set(data: Data, key: String) throws -> OSStatus {
+    public func set(data: Data, key: String) -> OSStatus {
         // 1. Delete any existing key before saving it
-        try delete(key: key)
+        let status = delete(key: key)
+
+        // a. errSecSuccess indicates an unhandled ciphertext got removed
+        // b. errSecItemNotFound indicates the ciphertext item to delete did not exist
+        guard status == errSecSuccess || status == errSecItemNotFound else {
+            return status
+        }
 
         let query = [
             kSecClass as String: kSecClassGenericPassword as String,
@@ -44,15 +54,15 @@ public final class KeyStorage: KeyStoring {
         var dataTypeRef: AnyObject?
         let status: OSStatus = security.SecItemCopyMatching(query as CFDictionary, &dataTypeRef)
 
-        if status == noErr {
-            return dataTypeRef as? Data
-        } else {
+        guard status == errSecSuccess else {
             return nil
         }
+
+        return dataTypeRef as? Data
     }
 
     @discardableResult
-    public func delete(key: String) throws -> OSStatus {
+    public func delete(key: String) -> OSStatus {
         let query = [
             kSecClass as String: kSecClassGenericPassword as String,
             kSecAttrAccount as String: key
