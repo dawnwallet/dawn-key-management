@@ -54,11 +54,11 @@ public final class KeyStorage: KeyStoring {
         var dataTypeRef: AnyObject?
         let status: OSStatus = security.SecItemCopyMatching(query as CFDictionary, &dataTypeRef)
 
-        if status == noErr {
-            return dataTypeRef as? Data
-        } else {
+        guard status == errSecSuccess else {
             return nil
         }
+
+        return dataTypeRef as? Data
     }
 
     @discardableResult
