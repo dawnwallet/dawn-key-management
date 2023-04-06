@@ -26,7 +26,7 @@ public final class KeyStorage: KeyStoring {
     public func set(data: Data, key: String) -> OSStatus {
         // 1. Delete any existing key before saving it
         let status = delete(key: key)
-        guard status == errSecSuccess else {
+        guard status == errSecSuccess || status == errSecItemNotFound else {
             return status
         }
 
