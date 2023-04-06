@@ -26,6 +26,9 @@ public final class KeyStorage: KeyStoring {
     public func set(data: Data, key: String) -> OSStatus {
         // 1. Delete any existing key before saving it
         let status = delete(key: key)
+
+        // a. errSecSuccess indicates an unhandled ciphertext got removed
+        // b. errSecItemNotFound indicates the ciphertext item to delete did not exist
         guard status == errSecSuccess || status == errSecItemNotFound else {
             return status
         }
