@@ -52,4 +52,17 @@ extension EthereumAccount {
             try sign(digest, privateKey: key)
         })
     }
+
+    /// Sign multiple digests within just one access to the keychain
+    public func signMultiple(_ digests: [ByteArray]) throws -> [Signature] {
+        // 1. Get the ciphertext stored in the keychain
+        guard let ciphertext = try keyStorage.get(key: address.eip55Description) else {
+            throw Error.notImported
+        }
+
+        // 2. Decrypt ciphertext, return the array of signatures
+        return try keyDecrypt.decrypt(address.eip55Description, cipherText: ciphertext, handler: { key in
+            return try digests.map { try sign($0, privateKey: key) }
+        })
+    }
 }
